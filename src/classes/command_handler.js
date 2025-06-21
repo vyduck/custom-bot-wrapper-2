@@ -1,9 +1,8 @@
 import { SlashCommandBuilder, MessageFlags, ChatInputCommandInteraction } from "discord.js";
 import ms from "ms";
+import { Handler } from "./handler.js";
 
-export class CommandHandler {
-    _cName;
-    _handler;
+export class CommandHandler extends Handler {
     _builder;
     _description;
     _category;
@@ -17,8 +16,11 @@ export class CommandHandler {
         category = 'General', 
         cooldown = [1, 1] 
     }) {
-        this.handler = handler;
-        this.cName = cName;
+        super({
+            eName: cName,
+            hName: cName,
+            handler: handler
+        })
         this.builder = builder;
         this.description = description;
         this.category = category;
@@ -73,20 +75,6 @@ export class CommandHandler {
         }
     }
 
-    set handler(handler) {
-        if (typeof handler !== 'function') {
-            throw new TypeError('Handler must be a function');
-        }
-        this._handler = handler;
-    }
-
-    set cName(name) {
-        if (typeof name !== 'string') {
-            throw new TypeError('Command name must be a string');
-        }
-        this._cName = name;
-    }
-
     set builder(builder) {
         if (!(builder instanceof SlashCommandBuilder)) {
             throw new TypeError('Builder must be an instance of SlashCommandBuilder');
@@ -115,12 +103,8 @@ export class CommandHandler {
         this._cooldown = cooldown;
     }
 
-    get handler() {
-        return this._handler;
-    }
-
     get cName() {
-        return this._cName;
+        return this.eName;
     }
 
     get builder() {

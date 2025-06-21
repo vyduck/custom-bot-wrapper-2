@@ -3,7 +3,6 @@ export class HookManager {
         this.hookPoints = hookPoints;
     }
 
-    
     set hookPoints(points) {
         this.hooks = {};
         if (!Array.isArray(points)) {
@@ -29,17 +28,12 @@ export class HookManager {
             throw new Error(`Hook point ${point} is not defined`);
 
         let hookContext = {};
-        for (const hook of this.hooks[point]) {
+        for (const hook of this.hooks[point])
             try {
-                hookContext = {
-                    ...(await hook.execute(context, ...args)),
-                    ...hookContext
-                };
+                hookContext[hook.hName] = await hook.execute(context, ...args);
             } catch (error) {
                 logger.error(`Error executing ${point} hook ${hook.hName}: ${error.message}`);
-                throw error; // Re-throw to stop further execution
             }
-        }
         return hookContext;
     }
 
