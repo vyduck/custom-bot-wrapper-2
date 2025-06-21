@@ -1,0 +1,20 @@
+{
+  "name": "cbw2",
+  "version": "1.0.0",
+  "description": "a custom discord.js bot wrapper",
+  "license": "GPL-3.0",
+  "author": "vyduck",
+  "type": "module",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "better-cooldown": "^1.1.2",
+    "cdep": "github:vyduck/embed-pages",
+    "discord.js": "^14.20.0",
+    "mongoose": "^8.16.0",
+    "ms": "^2.1.3",
+    "winston": "^3.17.0"
+  }
+}
