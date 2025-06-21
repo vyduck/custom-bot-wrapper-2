@@ -2,7 +2,7 @@ import { Handler } from './handler.js';
 
 export default class HandlerManager {
     _name;
-    handlers = {};
+    handlers = new Map();
     constructor(name) {
         this.name = name;
     }
@@ -22,9 +22,9 @@ export default class HandlerManager {
         if (!(handler instanceof Handler))
             throw new TypeError('Handler must be an instance of Handler class');
 
-        const name = handler.eName;
-        if (!Object.keys(this.handlers).includes(name)) this.handlers[name] = [];
-        this.handlers[name].push(handler);
+        const eventName = handler.eName;
+        if (!this.handlers.has(eventName)) this.handlers.set(eventName, new Map());
+        this.handlers.get(eventName).set(handler.hName, handler);
     }
 
     async trigger(name, ...args) {
@@ -44,4 +44,32 @@ export default class HandlerManager {
         return results;
     }
 
+    has(hName) {
+        if (typeof hName !== 'string')
+            throw new TypeError('Handler name must be a string');
+
+        for (const handlers of this.handlers.values()) 
+            if (handlers.has(hName)) 
+                return true;
+
+        return false;
+    }
+
+    get(hName) {
+        if (typeof hName !== 'string')
+            throw new TypeError('Handler name must be a string');
+
+        for (const handlers of this.handlers.values()) 
+            if (handlers.has(hName)) 
+                return handlers.get(hName);
+
+        return undefined;
+    }
+
+    getAll() {
+        let handlers = [];
+        for (const handlersMap of this.handlers.values()) 
+            handlers = handlers.concat(Array.from(handlersMap.values()));
+        return handlers;
+    }
 }

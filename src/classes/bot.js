@@ -90,10 +90,10 @@ export class Bot {
         if (!(event instanceof EventHandler)) {
             throw new TypeError('Event must be an instance of EventHandler');
         }
-        if (this.eventMap.has(event.hName)) {
-            throw new Error(`Event with handler name ${event.hName} already exists`);
+        if (this.eventMap.has(event.eName, event.hName)) {
+            throw new Error(`Event with handler name ${event.hName} already exists under event ${event.eName}`);
         }
-        this.eventMap.add(event);
+        this.eventMap.addHandler(event);
     }
 
     addEvents(events) {
@@ -121,7 +121,8 @@ export class Bot {
     }
 
     #attachEvents() {
-        for (const event of this.eventMap.values()) {
+        const allEvents = this.eventMap.getAll();
+        for (const event of allEvents) {
             logger.debug(`Attaching event: ${event.hName}`);
             this.client[event.once ? "once" : "on"](
                 event.eName,
@@ -140,7 +141,7 @@ export class Bot {
                     await this.hooks.trigger(`post-event`, context, ...args)
                 });
         }
-        logger.debug(`Attached ${this.eventMap.size} events.`);
+        logger.debug(`Attached ${allEvents.length} events.`);
     }
 
     #addDefaultEvents() {
@@ -188,7 +189,7 @@ export class Bot {
 
     async #publishCommands() {
         logger.debug("Publishing commands to Discord...");
-        const commands = Array.from(this.commandMap.values()).map(cmd => cmd.builder.toJSON());
+        const commands = this.commandMap.getAll().map(cmd => cmd.builder.toJSON());
         const rest = new REST({ version: '10' }).setToken(this.configMap.get('token'));
         try {
             logger.debug('Started refreshing application (/) commands.');
