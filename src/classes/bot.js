@@ -2,39 +2,56 @@ import { Client, IntentsBitField, REST, Routes } from "discord.js";
 import mongoose from "mongoose";
 
 import { CooldownManager } from "./cooldown_manager.js";
-
 import { HandlerManager } from "./handler_manager.js";
 import { CommandHandler } from "./command_handler.js";
 import { EventHandler } from "./event_handler.js";
 import { HookHandler } from "./hook_handler.js";
-
 import { Logger } from "./logger.js";
 import { Store } from "../stores/store.js";
 
 import defaultCommands from "../defaults/commands/index.js";
 import defaultEvents from "../defaults/events/index.js";
 
+/**
+ * Main Bot class for managing Discord client, commands, events, hooks, and database.
+ */
 export class Bot {
+    /** @type {Client} */
     client;
+    /** @type {CooldownManager} */
     cooldownManager = new CooldownManager();
-
+    /** @type {Map<string, any>} */
     configMap = new Map();
-
+    /** @type {HandlerManager} */
     commandMap = new HandlerManager('command');
+    /** @type {HandlerManager} */
     eventMap = new HandlerManager('event');
+    /** @type {HandlerManager} */
     hooks = new HandlerManager('hook');
 
+    /**
+     * Get the global logger instance.
+     * @returns {Logger}
+     */
     get logger() {
         if (!logger)
             this.#createLogger();
         return global.logger;
     }
 
+    /**
+     * Database connection and stores.
+     * @type {{ stores: Record<string, Store>, connection: mongoose.Connection | null }}
+     */
     database = {
         stores: {},
         connection: null
     };
 
+    /**
+     * Returns the base context object for handlers.
+     * @returns {Object}
+     */
     get baseContext() {
         return {
             commandMap: this.commandMap,
@@ -45,6 +62,15 @@ export class Bot {
         }
     }
 
+    /**
+     * Create a new Bot instance.
+     * @param {Object} param0
+     * @param {Object} [param0.clientOptions] - Discord.js client options.
+     * @param {Object} param0.options - Bot options.
+     * @param {string} param0.options.token - Discord bot token.
+     * @param {string} param0.options.clientId - Discord application client ID.
+     * @param {string} [param0.options.mongoUri] - MongoDB connection URI.
+     */
     constructor({
         clientOptions = {
             intents: IntentsBitField.Flags.Guilds
@@ -68,6 +94,10 @@ export class Bot {
         this.client = new Client(clientOptions);
     }
 
+    /**
+     * Add a single command handler.
+     * @param {CommandHandler} command
+     */
     addCommandHandler(command) {
         if (!(command instanceof CommandHandler)) {
             throw new TypeError('Command must be an instance of CommandHandler');
@@ -79,6 +109,10 @@ export class Bot {
         this.cooldownManager.addCommand(command.cName, command.cooldown);
     }
 
+    /**
+     * Add multiple command handlers.
+     * @param {CommandHandler[]} commands
+     */
     addCommands(commands) {
         if (!Array.isArray(commands)) {
             throw new TypeError('Commands must be an array of CommandHandler instances');
@@ -88,6 +122,10 @@ export class Bot {
         }
     }
 
+    /**
+     * Add a single event handler.
+     * @param {EventHandler} event
+     */
     addEventHandler(event) {
         if (!(event instanceof EventHandler)) {
             throw new TypeError('Event must be an instance of EventHandler');
@@ -98,6 +136,10 @@ export class Bot {
         this.eventMap.addHandler(event);
     }
 
+    /**
+     * Add multiple event handlers.
+     * @param {EventHandler[]} events
+     */
     addEvents(events) {
         if (!Array.isArray(events)) {
             throw new TypeError('Events must be an array of EventHandler instances');
@@ -107,6 +149,10 @@ export class Bot {
         }
     }
 
+    /**
+     * Add a single hook handler.
+     * @param {HookHandler} hook
+     */
     addHook(hook) {
         if (!(hook instanceof HookHandler)) {
             throw new TypeError('Hook must be an instance of HookHandler');
@@ -117,6 +163,10 @@ export class Bot {
         this.hooks.addHandler(hook);
     }
 
+    /**
+     * Add multiple hook handlers.
+     * @param {HookHandler[]} hooks
+     */
     addHooks(hooks) {
         if (!Array.isArray(hooks)) {
             throw new TypeError('Hooks must be an array of HookHandler instances');
@@ -125,7 +175,11 @@ export class Bot {
             this.addHook(hook);
         }
     }
-    
+
+    /**
+     * Add a single store.
+     * @param {Store} store
+     */
     addStore(store) {
         if (!(store instanceof Store))
             throw new TypeError('Store must be an instance of Store');
@@ -134,6 +188,10 @@ export class Bot {
         this.database.stores[store.name] = store;
     }
 
+    /**
+     * Add multiple stores.
+     * @param {Store[]} stores
+     */
     addStores(stores) {
         if (!Array.isArray(stores))
             throw new TypeError('Stores must be an array of Store instances');
@@ -141,6 +199,10 @@ export class Bot {
             this.addStore(store);
     }
 
+    /**
+     * Attach all registered event handlers to the Discord client.
+     * @private
+     */
     #attachEvents() {
         const allEvents = this.eventMap.handlers.keys();
         for (const event of allEvents) {
@@ -169,6 +231,10 @@ export class Bot {
         logger.debug(`Attached ${allEvents.length} events.`);
     }
 
+    /**
+     * Add default event handlers.
+     * @private
+     */
     #addDefaultEvents() {
         logger.debug("Adding default events...");
         for (const event of defaultEvents)
@@ -176,6 +242,10 @@ export class Bot {
         logger.debug(`Added ${defaultEvents.length} default events.`);
     }
 
+    /**
+     * Create and set up the global logger.
+     * @private
+     */
     #createLogger() {
         global.logger = new Logger({
             level: 'info',
@@ -185,6 +255,11 @@ export class Bot {
         logger.debug("Logger initialized.");
     }
 
+    /**
+     * Attach the command handler to the Discord client.
+     * @private
+     * @returns {Promise<void>}
+     */
     async #attachCommandsHandler() {
         this.client.on('interactionCreate', async (interaction) => {
             if (!interaction.isCommand()) return;
@@ -210,6 +285,11 @@ export class Bot {
         });
     }
 
+    /**
+     * Add default command handlers.
+     * @private
+     * @returns {Promise<void>}
+     */
     async #addDefaultCommands() {
         logger.debug("Adding default commands...");
         for (const command of defaultCommands)
@@ -217,6 +297,11 @@ export class Bot {
         logger.debug(`Added ${defaultCommands.length} default commands.`);
     }
 
+    /**
+     * Publish all registered commands to Discord.
+     * @private
+     * @returns {Promise<void>}
+     */
     async #publishCommands() {
         logger.debug("Publishing commands to Discord...");
         const commands = this.commandMap.getAll().map(cmd => cmd.builder.toJSON());
@@ -235,6 +320,11 @@ export class Bot {
         logger.debug(`Published ${commands.length} commands.`);
     }
 
+    /**
+     * Connect to the MongoDB database.
+     * @private
+     * @returns {Promise<void>}
+     */
     async #connectToDatabase() {
         if (!this.configMap.has('mongoUri'))
             throw new Error('Mongo URI is not set in the configuration');
@@ -248,6 +338,11 @@ export class Bot {
         }
     }
 
+    /**
+     * Log in to Discord with the provided token.
+     * @private
+     * @returns {Promise<void>}
+     */
     async #login() {
         if (!this.configMap.has('token')) {
             throw new Error('Token is not set in the configuration');
@@ -261,6 +356,10 @@ export class Bot {
         }
     }
 
+    /**
+     * Start the bot: attach events, commands, connect to DB, and log in.
+     * @returns {Promise<void>}
+     */
     async start() {
         if (!this.configMap.has('token')) {
             throw new Error('Token is not set in the configuration');

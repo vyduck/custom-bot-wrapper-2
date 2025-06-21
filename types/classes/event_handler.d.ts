@@ -1,13 +1,8 @@
-import { Handler } from "./handler.js";
-
 /**
  * EventHandler class for managing individual Discord event handlers.
  * Extends the base Handler class.
  */
 export class EventHandler extends Handler {
-    /** @type {boolean} */
-    _once;
-
     /**
      * Create a new EventHandler.
      * @param {Object} options
@@ -16,31 +11,23 @@ export class EventHandler extends Handler {
      * @param {string} options.eName - Event name.
      * @param {boolean} [options.once=false] - Whether the event should be handled only once.
      */
-    constructor({ handler, hName, eName, once = false }) {
-        super({
-            handler,
-            eName,
-            hName
-        })
-        this.once = once;
-    }
-
+    constructor({ handler, hName, eName, once }: {
+        handler: Function;
+        hName: string;
+        eName: string;
+        once?: boolean;
+    });
+    /** @type {boolean} */
+    _once: boolean;
     /**
      * Set whether the event should be handled only once.
      * @param {boolean} value
      */
-    set once(value) {
-        if (typeof value !== 'boolean') {
-            throw new TypeError('Once must be a boolean');
-        }
-        this._once = value;
-    }
-
+    set once(value: boolean);
     /**
      * Get whether the event should be handled only once.
      * @returns {boolean}
      */
-    get once() {
-        return this._once;
-    }
+    get once(): boolean;
 }
+import { Handler } from "./handler.js";

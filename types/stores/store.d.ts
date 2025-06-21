@@ -3,39 +3,17 @@
  * Should be extended by specific store implementations.
  */
 export class Store {
-    /** @type {string} */
-    name; // Name of the store
-
     /**
      * Create a new Store.
      * @param {Object} options - Store options.
      * @param {string} options.name - Name of the store.
      */
-    constructor({
-        name
-    }) {
-        this.name = name;
-    }
-
-    /**
-     * Set the name of the store.
-     * @param {string} value
-     */
-    set name(value) {
-        if (typeof value !== "string") {
-            throw new TypeError("Store name must be a string");
-        }
-        this._name = value;
-    }
-
-    /**
-     * Get the name of the store.
-     * @returns {string}
-     */
-    get name() {
-        return this._name;
-    }
-
+    constructor({ name }: {
+        name: string;
+    });
+    /** @type {string} */
+    name: string;
+    _name: string;
     /**
      * Find one document by query.
      * Should be implemented by subclasses.
@@ -43,10 +21,7 @@ export class Store {
      * @returns {Promise<any>}
      * @throws {Error} If not implemented.
      */
-    async findOne(query) {
-        throw new Error("findOne() must be implemented by subclass");
-    }
-
+    findOne(query: any): Promise<any>;
     /**
      * Create a new document.
      * Should be implemented by subclasses.
@@ -54,10 +29,7 @@ export class Store {
      * @returns {Promise<any>}
      * @throws {Error} If not implemented.
      */
-    async create(data) {
-        throw new Error("create() must be implemented by subclass");
-    }
-
+    create(data: any): Promise<any>;
     /**
      * Update a document.
      * Should be implemented by subclasses.
@@ -67,10 +39,7 @@ export class Store {
      * @returns {Promise<any>}
      * @throws {Error} If not implemented.
      */
-    async update(query, update, options = {}) {
-        throw new Error("update() must be implemented by subclass");
-    }
-
+    update(query: any, update: any, options?: any): Promise<any>;
     /**
      * Delete a document.
      * Should be implemented by subclasses.
@@ -78,10 +47,7 @@ export class Store {
      * @returns {Promise<any>}
      * @throws {Error} If not implemented.
      */
-    async delete(query) {
-        throw new Error("delete() must be implemented by subclass");
-    }
-
+    delete(query: any): Promise<any>;
     /**
      * Get or create a document.
      * Should be implemented by subclasses.
@@ -90,7 +56,5 @@ export class Store {
      * @returns {Promise<any>}
      * @throws {Error} If not implemented.
      */
-    async getOrCreate(query, defaults = {}) {
-        throw new Error("getOrCreate() must be implemented by subclass");
-    }
+    getOrCreate(query: any, defaults?: any): Promise<any>;
 }

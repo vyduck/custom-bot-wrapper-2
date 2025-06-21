@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "allowJs": true,
+    "declaration": true,
+    "emitDeclarationOnly": true,
+    "outDir": "types",
+    "module": "esnext",
+    "target": "es2022",
+    "moduleResolution": "node"
+  },
+  "include": ["src/**/*.js"]
+}

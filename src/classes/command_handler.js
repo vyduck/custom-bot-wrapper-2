@@ -2,12 +2,30 @@ import { SlashCommandBuilder, MessageFlags, ChatInputCommandInteraction } from "
 import ms from "ms";
 import { Handler } from "./handler.js";
 
+/**
+ * CommandHandler class for managing individual Discord slash commands.
+ * Extends the base Handler class.
+ */
 export class CommandHandler extends Handler {
+    /** @type {SlashCommandBuilder} */
     _builder;
+    /** @type {string} */
     _description;
+    /** @type {string} */
     _category;
+    /** @type {[number, number]} */
     _cooldown;
 
+    /**
+     * Create a new CommandHandler.
+     * @param {Object} options
+     * @param {Function} options.handler - The function to execute for this command.
+     * @param {string} options.cName - Command name.
+     * @param {SlashCommandBuilder} options.builder - Slash command builder.
+     * @param {string} [options.description] - Command description.
+     * @param {string} [options.category] - Command category.
+     * @param {[number, number]} [options.cooldown] - Cooldown as [limit, seconds].
+     */
     constructor({ 
         handler, 
         cName, 
@@ -27,6 +45,12 @@ export class CommandHandler extends Handler {
         this.cooldown = cooldown;
     }
 
+    /**
+     * Execute the command, handling cooldowns and errors.
+     * @param {Object} context - Command context.
+     * @param {ChatInputCommandInteraction} interaction - Discord interaction.
+     * @returns {Promise<void>}
+     */
     async execute(context, interaction) {
         if (!(interaction instanceof ChatInputCommandInteraction)) {
             throw new Error('Interaction is not a command');
@@ -75,6 +99,10 @@ export class CommandHandler extends Handler {
         }
     }
 
+    /**
+     * Set the SlashCommandBuilder for this command.
+     * @param {SlashCommandBuilder} builder
+     */
     set builder(builder) {
         if (!(builder instanceof SlashCommandBuilder)) {
             throw new TypeError('Builder must be an instance of SlashCommandBuilder');
@@ -82,6 +110,10 @@ export class CommandHandler extends Handler {
         this._builder = builder;
     }
 
+    /**
+     * Set the description for this command.
+     * @param {string} desc
+     */
     set description(desc) {
         if (typeof desc !== 'string') {
             throw new TypeError('Description must be a string');
@@ -89,6 +121,10 @@ export class CommandHandler extends Handler {
         this._description = desc;
     }
 
+    /**
+     * Set the category for this command.
+     * @param {string} cat
+     */
     set category(cat) {
         if (typeof cat !== 'string') {
             throw new TypeError('Category must be a string');
@@ -96,6 +132,10 @@ export class CommandHandler extends Handler {
         this._category = cat;
     }
 
+    /**
+     * Set the cooldown for this command.
+     * @param {[number, number]} cooldown
+     */
     set cooldown(cooldown) {
         if (!Array.isArray(cooldown) || cooldown.length !== 2 || typeof cooldown[0] !== 'number' || typeof cooldown[1] !== 'number') {
             throw new TypeError('Cooldown must be an array of the format [limitPerPeriod, periodInSeconds]');
@@ -103,22 +143,42 @@ export class CommandHandler extends Handler {
         this._cooldown = cooldown;
     }
 
+    /**
+     * Get the command name.
+     * @returns {string}
+     */
     get cName() {
         return this.eName;
     }
 
+    /**
+     * Get the SlashCommandBuilder.
+     * @returns {SlashCommandBuilder}
+     */
     get builder() {
         return this._builder;
     }
 
+    /**
+     * Get the command description.
+     * @returns {string}
+     */
     get description() {
         return this._description;
     }
 
+    /**
+     * Get the command category.
+     * @returns {string}
+     */
     get category() {
         return this._category;
     }
 
+    /**
+     * Get the command cooldown.
+     * @returns {[number, number]}
+     */
     get cooldown() {
         return this._cooldown;
     }
