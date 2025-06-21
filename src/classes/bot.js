@@ -18,6 +18,13 @@ export class Bot {
     commandMap = new Map();
     eventMap = new Map();
 
+    hooks = {
+        preCommand: [],
+        postCommand: [],
+        preEvent: [],
+        postEvent: []
+    };
+
     get logger() {
         if (!logger)
             this.#createLogger();
@@ -29,7 +36,7 @@ export class Bot {
         connection: null
     };
 
-    get context() {
+    get baseContext() {
         return {
             commandMap: this.commandMap,
             configMap: this.configMap,
@@ -116,18 +123,57 @@ export class Bot {
             this.addStore(store);
     }
 
+    hook(hook) {
+        if (!(hook instanceof Hook)) {
+            throw new TypeError('Hook must be an instance of Hook');
+        }
+        if (!this.eventMap.has(hook.when)) {
+            throw new Error(`No event found for hook when: ${hook.when}`);
+        }
+
+        this.hooks[hook.when].push(hook);
+        logger.debug(`Hook added: ${hook.hName} for event: ${hook.when}`);
+    }
+
     #attachEvents() {
         for (const event of this.eventMap.values()) {
             logger.debug(`Attaching event: ${event.hName}`);
             this.client[event.once ? "once" : "on"](
                 event.eName,
-                (...args) => {
+                async (...args) => {
+                    // Execute pre-event hooks
+                    let context = {
+                        event,
+                        ...this.baseContext
+                    };
+                    let hookContext = {};
+                    for (const hook of this.hooks.preEvent)
+                        try {
+                            logger.debug(`Executing pre-event hook: ${hook.hName}`);
+                            hookContext = {
+                                ...(await hook.execute(context, ...args)),
+                                hookContext
+                            };
+                        } catch (error) {
+                            logger.error(`Error executing pre-event hook ${hook.hName}: ${error.message}`);
+                        }
+                    // Merge hook context into base context
+                    context.hookContext = hookContext;
+                    // Execute the event handler
                     try {
                         logger.debug(`Executing event: ${event.hName}`);
-                        event.execute(this.context, ...args)
+                        event.execute(context, ...args)
                     } catch (error) {
                         logger.error(`Error executing event ${event.hName}: ${error.message}`);
                     }
+                    // Execute post-event hooks
+                    for (const hook of this.hooks.postEvent)
+                        try {
+                            logger.debug(`Executing post-event hook: ${hook.hName}`);
+                            hook.execute(context, ...args);
+                        } catch (error) {
+                            logger.error(`Error executing post-event hook ${hook.hName}: ${error.message}`);
+                        }
                 });
         }
         logger.debug(`Attached ${this.eventMap.size} events.`);
@@ -156,8 +202,38 @@ export class Bot {
             const command = this.commandMap.get(interaction.commandName);
             if (!command) return;
 
+            // Execute pre-command hooks
+            let context = {
+                command,
+                interaction,
+                ...this.baseContext
+            };
+
+            let hookContext = {};
+            for (const hook of this.hooks.preCommand)
+                try {
+                    logger.debug(`Executing pre-command hook: ${hook.hName}`);
+                    hookContext = {
+                        ...(await hook.execute(context, interaction)),
+                        hookContext
+                    };
+                } catch (error) {
+                    logger.error(`Error executing pre-command hook ${hook.hName}: ${error.message}`);
+                }
+
+            // Merge hook context into base context
+            context.hookContext = hookContext;
+            // Execute the command handler
             logger.debug(`Executing command: ${command.cName}`);
-            await command.execute(this.context, interaction);
+            await command.execute(context, interaction);
+            // Execute post-command hooks
+            for (const hook of this.hooks.postCommand)
+                try {
+                    logger.debug(`Executing post-command hook: ${hook.hName}`);
+                    await hook.execute(context, interaction);
+                } catch (error) {
+                    logger.error(`Error executing post-command hook ${hook.hName}: ${error.message}`);
+                }
         });
     }
 
