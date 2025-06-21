@@ -1,4 +1,4 @@
-import Handler from "./handler";
+import Handler from "./handler.js";
 
 export class EventHandler extends Handler {
     _once;
@@ -10,10 +10,6 @@ export class EventHandler extends Handler {
             hName
         })
         this.once = once;
-    }
-
-    execute(context, ...args) {
-        return this.handler(context, ...args);
     }
 
     set once(value) {

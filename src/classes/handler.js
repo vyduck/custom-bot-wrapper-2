@@ -42,7 +42,7 @@ export default class Handler {
     }
 
     // Method to execute the handler
-    async execute(context, ...args) {
-        return await this.handler({ handler: this, ...context }, ...args);
+    async execute(...args) {
+        return await this.handler(...args);
     }
 }

@@ -10,15 +10,16 @@ import { Store } from "../stores/store.js";
 import defaultCommands from "../defaults/commands/index.js";
 import defaultEvents from "../defaults/events/index.js";
 import { HookManager } from "./hook.js";
+import HandlerManager from "./handler_manager.js";
 
 export class Bot {
     client;
     cooldownManager = new CooldownManager();
 
     configMap = new Map();
-    commandMap = new Map();
-    eventMap = new Map();
 
+    commandMap = new HandlerManager('command');
+    eventMap = new HandlerManager('event');
     hooks = new HookManager(['command', 'event']);
 
     get logger() {
@@ -72,7 +73,7 @@ export class Bot {
         if (this.commandMap.has(command.cName)) {
             throw new Error(`Command with name ${command.cName} already exists`);
         }
-        this.commandMap.set(command.cName, command);
+        this.commandMap.addHandler(command);
         this.cooldownManager.addCommand(command.cName, command.cooldown);
     }
 
@@ -92,7 +93,7 @@ export class Bot {
         if (this.eventMap.has(event.hName)) {
             throw new Error(`Event with handler name ${event.hName} already exists`);
         }
-        this.eventMap.set(event.hName, event);
+        this.eventMap.add(event);
     }
 
     addEvents(events) {
