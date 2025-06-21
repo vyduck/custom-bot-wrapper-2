@@ -2,15 +2,17 @@ import { Client, IntentsBitField, REST, Routes } from "discord.js";
 import mongoose from "mongoose";
 
 import { CooldownManager } from "./cooldown_manager.js";
+
+import { HandlerManager } from "./handler_manager.js";
 import { CommandHandler } from "./command_handler.js";
 import { EventHandler } from "./event_handler.js";
+import { HookHandler } from "./hook_handler.js";
+
 import { Logger } from "./logger.js";
 import { Store } from "../stores/store.js";
 
 import defaultCommands from "../defaults/commands/index.js";
 import defaultEvents from "../defaults/events/index.js";
-import { Hook, HookManager } from "./hook.js";
-import { HandlerManager } from "./handler_manager.js";
 
 export class Bot {
     client;
@@ -106,14 +108,24 @@ export class Bot {
     }
 
     addHook(hook) {
-        if (!(hook instanceof Hook)) {
-            throw new TypeError('Hook must be an instance of Hook');
+        if (!(hook instanceof HookHandler)) {
+            throw new TypeError('Hook must be an instance of HookHandler');
         }
         if (this.hooks.has(hook.hName)) {
             throw new Error(`Hook with name ${hook.hName} already exists`);
         }
         this.hooks.addHandler(hook);
     }
+
+    addHooks(hooks) {
+        if (!Array.isArray(hooks)) {
+            throw new TypeError('Hooks must be an array of HookHandler instances');
+        }
+        for (const hook of hooks) {
+            this.addHook(hook);
+        }
+    }
+    
     addStore(store) {
         if (!(store instanceof Store))
             throw new TypeError('Store must be an instance of Store');
@@ -135,16 +147,22 @@ export class Bot {
             this.client.on(
                 event,
                 async (...args) => {
+                    // Prepare context
                     let context = {
                         event,
                         ...this.baseContext
                     };
-                    context.hookContext = await this.hooks.trigger(`pre-event`, context, ...args);
+                    // Run pre-event hooks
+                    const hookResults = await this.hooks.trigger(`pre-event`, context, ...args);
+                    // Attach output of hooks to context
+                    context.hookContext = hookResults;
+                    // Execute the event handler
                     try {
                         await this.eventMap.trigger(event, context, ...args)
                     } catch (error) {
                         logger.error(`Error executing event ${event.hName}: ${error.message}`);
                     }
+                    // Run post-event hooks
                     await this.hooks.trigger(`post-event`, context, ...args)
                 });
         }
@@ -174,14 +192,20 @@ export class Bot {
             const command = interaction.commandName;
             if (!this.commandMap.has(interaction.commandName)) return;
 
+            // Prepare context
             let context = {
                 command,
                 interaction,
                 ...this.baseContext
             };
 
-            context.hookContext = await this.hooks.trigger(`pre-command`, context, interaction);
+            // Run pre-command hooks
+            const hookResults = await this.hooks.trigger(`pre-command`, context, interaction);
+            // Attach output of hooks to context
+            context.hookContext = hookResults;
+            // Execute the command handler
             await this.commandMap.trigger(command, context, interaction);
+            // Run post-command hooks
             await this.hooks.trigger(`post-command`, context, interaction);
         });
     }

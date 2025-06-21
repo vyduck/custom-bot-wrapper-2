@@ -2,13 +2,13 @@ import { Bot } from './classes/bot.js';
 import { CommandHandler } from './classes/command_handler.js';
 import { EventHandler } from './classes/event_handler.js';
 import { MongoStore, ObjectStore, Store } from './stores/index.js'; 
-import { Hook } from './classes/hook.js';
+import { HookHandler } from './classes/hook_handler.js';
 
 export {
     Bot,
     CommandHandler,
     EventHandler,
-    Hook,
+    HookHandler,
     MongoStore,
     ObjectStore,
     Store

@@ -31,14 +31,14 @@ export class HandlerManager {
         if (typeof name !== 'string')
             throw new TypeError('Handler name must be a string');
         if (!this.handlers.has(name))
-            throw new Error(`Handler ${name} does not exist`);
+            return {};
 
         const results = {};
-        for (const handler of this.handlers[name]) {
+        for (const handler of this.handlers.get(name).values()) {
             try {
                 results[handler.hName] = await handler.execute(...args);
             } catch (error) {
-                console.error(`Error executing ${this.name} handler ${name}:`, error);
+                logger.error(`Error executing ${this.name} handler ${name}: ${error.message}`);
             }
         }
         return results;
