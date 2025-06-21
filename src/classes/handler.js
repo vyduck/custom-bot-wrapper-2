@@ -1,4 +1,4 @@
-export default class Handler {
+export class Handler {
     _eName;
     _hName;
     _handler;

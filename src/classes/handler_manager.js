@@ -1,6 +1,6 @@
 import { Handler } from './handler.js';
 
-export default class HandlerManager {
+export class HandlerManager {
     _name;
     handlers = new Map();
     constructor(name) {
@@ -30,7 +30,7 @@ export default class HandlerManager {
     async trigger(name, ...args) {
         if (typeof name !== 'string')
             throw new TypeError('Handler name must be a string');
-        if (!Object.keys(this.handlers).includes(name))
+        if (!this.handlers.has(name))
             throw new Error(`Handler ${name} does not exist`);
 
         const results = {};

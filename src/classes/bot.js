@@ -9,8 +9,8 @@ import { Store } from "../stores/store.js";
 
 import defaultCommands from "../defaults/commands/index.js";
 import defaultEvents from "../defaults/events/index.js";
-import { HookManager } from "./hook.js";
-import HandlerManager from "./handler_manager.js";
+import { Hook, HookManager } from "./hook.js";
+import { HandlerManager } from "./handler_manager.js";
 
 export class Bot {
     client;
@@ -20,7 +20,7 @@ export class Bot {
 
     commandMap = new HandlerManager('command');
     eventMap = new HandlerManager('event');
-    hooks = new HookManager(['command', 'event']);
+    hooks = new HandlerManager('hook');
 
     get logger() {
         if (!logger)
@@ -90,7 +90,7 @@ export class Bot {
         if (!(event instanceof EventHandler)) {
             throw new TypeError('Event must be an instance of EventHandler');
         }
-        if (this.eventMap.has(event.eName, event.hName)) {
+        if (this.eventMap.has(event.hName)) {
             throw new Error(`Event with handler name ${event.hName} already exists under event ${event.eName}`);
         }
         this.eventMap.addHandler(event);
@@ -105,6 +105,15 @@ export class Bot {
         }
     }
 
+    addHook(hook) {
+        if (!(hook instanceof Hook)) {
+            throw new TypeError('Hook must be an instance of Hook');
+        }
+        if (this.hooks.has(hook.hName)) {
+            throw new Error(`Hook with name ${hook.hName} already exists`);
+        }
+        this.hooks.addHandler(hook);
+    }
     addStore(store) {
         if (!(store instanceof Store))
             throw new TypeError('Store must be an instance of Store');
@@ -121,11 +130,10 @@ export class Bot {
     }
 
     #attachEvents() {
-        const allEvents = this.eventMap.getAll();
+        const allEvents = this.eventMap.handlers.keys();
         for (const event of allEvents) {
-            logger.debug(`Attaching event: ${event.hName}`);
-            this.client[event.once ? "once" : "on"](
-                event.eName,
+            this.client.on(
+                event,
                 async (...args) => {
                     let context = {
                         event,
@@ -133,8 +141,7 @@ export class Bot {
                     };
                     context.hookContext = await this.hooks.trigger(`pre-event`, context, ...args);
                     try {
-                        logger.debug(`Executing event: ${event.hName}`);
-                        await event.execute(context, ...args)
+                        await this.eventMap.trigger(event, context, ...args)
                     } catch (error) {
                         logger.error(`Error executing event ${event.hName}: ${error.message}`);
                     }
@@ -164,8 +171,8 @@ export class Bot {
         this.client.on('interactionCreate', async (interaction) => {
             if (!interaction.isCommand()) return;
 
-            const command = this.commandMap.get(interaction.commandName);
-            if (!command) return;
+            const command = interaction.commandName;
+            if (!this.commandMap.has(interaction.commandName)) return;
 
             let context = {
                 command,
@@ -174,8 +181,7 @@ export class Bot {
             };
 
             context.hookContext = await this.hooks.trigger(`pre-command`, context, interaction);
-            logger.debug(`Executing command: ${command.cName}`);
-            await command.execute(context, interaction);
+            await this.commandMap.trigger(command, context, interaction);
             await this.hooks.trigger(`post-command`, context, interaction);
         });
     }
