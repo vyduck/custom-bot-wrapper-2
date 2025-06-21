@@ -19,7 +19,7 @@ export class Bot {
     commandMap = new Map();
     eventMap = new Map();
 
-    hooks = new HookManager(['pre-command', 'post-command', 'pre-event', 'post-event']);
+    hooks = new HookManager(['command', 'event']);
 
     get logger() {
         if (!logger)
@@ -132,7 +132,7 @@ export class Bot {
                     context.hookContext = await this.hooks.trigger(`pre-event`, context, ...args);
                     try {
                         logger.debug(`Executing event: ${event.hName}`);
-                        event.execute(context, ...args)
+                        await event.execute(context, ...args)
                     } catch (error) {
                         logger.error(`Error executing event ${event.hName}: ${error.message}`);
                     }

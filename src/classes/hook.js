@@ -1,22 +1,21 @@
 export class HookManager {
     constructor(hookPoints = []) {
-        super();
         this.hookPoints = hookPoints;
     }
 
-    hooks = {};
-
+    
     set hookPoints(points) {
+        this.hooks = {};
         if (!Array.isArray(points)) {
             throw new TypeError('Hook points must be an array');
         }
         for (const point of points) {
             if (typeof point !== 'string')
                 throw new TypeError('Each hook point must be a string');
-            hooks['pre-' + point] = [];
-            hooks['post-' + point] = [];
+            this.hooks['pre-' + point] = [];
+            this.hooks['post-' + point] = [];
         }
-        this._hookPoints = points;
+        this._hookPoints = Object.keys(this.hooks);
     }
 
     get hookPoints() {
@@ -30,7 +29,7 @@ export class HookManager {
             throw new Error(`Hook point ${point} is not defined`);
 
         let hookContext = {};
-        for (const hook of this.hooks.get(point) || []) {
+        for (const hook of this.hooks[point]) {
             try {
                 hookContext = {
                     ...(await hook.execute(context, ...args)),
@@ -82,12 +81,8 @@ export class Hook {
     }
 
     set when(when) {
-        if (typeof when !== 'string') {
+        if (typeof when !== 'string')
             throw new TypeError('When must be a string');
-        }
-        if (!hookPoints.includes(when)) {
-            throw new Error(`When must be one of: ${hookPoints.join(', ')}`);
-        }
         this._when = when;
     }
 
