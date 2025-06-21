@@ -15,6 +15,8 @@ export class CommandHandler extends Handler {
     _category;
     /** @type {[number, number]} */
     _cooldown;
+    /** @type {Function} */
+    _autocomplete;
 
     /**
      * Create a new CommandHandler.
@@ -32,7 +34,8 @@ export class CommandHandler extends Handler {
         builder, 
         description = '', 
         category = 'General', 
-        cooldown = [1, 1] 
+        cooldown = [1, 1],
+        autocomplete = null
     }) {
         super({
             eName: cName,
@@ -43,6 +46,7 @@ export class CommandHandler extends Handler {
         this.description = description;
         this.category = category;
         this.cooldown = cooldown;
+        this.autocomplete = autocomplete;
     }
 
     /**
@@ -111,6 +115,17 @@ export class CommandHandler extends Handler {
     }
 
     /**
+     * Set the autocomplete function for this command.
+     * @param {Function} autocomplete
+     */
+    set autocomplete(autocomplete) {
+        if (autocomplete !== null && typeof autocomplete !== 'function') {
+            throw new TypeError('Autocomplete must be a function or null');
+        }
+        this._autocomplete = autocomplete;
+    }
+
+    /**
      * Set the description for this command.
      * @param {string} desc
      */
@@ -120,7 +135,6 @@ export class CommandHandler extends Handler {
         }
         this._description = desc;
     }
-
     /**
      * Set the category for this command.
      * @param {string} cat
@@ -131,7 +145,6 @@ export class CommandHandler extends Handler {
         }
         this._category = cat;
     }
-
     /**
      * Set the cooldown for this command.
      * @param {[number, number]} cooldown
@@ -142,7 +155,6 @@ export class CommandHandler extends Handler {
         }
         this._cooldown = cooldown;
     }
-
     /**
      * Get the command name.
      * @returns {string}
@@ -157,6 +169,14 @@ export class CommandHandler extends Handler {
      */
     get builder() {
         return this._builder;
+    }
+
+    /**
+     * Get the autocomplete function.
+     * @returns {Function|null}
+     */
+    get autocomplete() {
+        return this._autocomplete;
     }
 
     /**

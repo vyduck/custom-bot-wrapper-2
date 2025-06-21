@@ -262,8 +262,6 @@ export class Bot {
      */
     async #attachCommandsHandler() {
         this.client.on('interactionCreate', async (interaction) => {
-            if (!interaction.isCommand()) return;
-
             const command = interaction.commandName;
             if (!this.commandMap.has(interaction.commandName)) return;
 
@@ -274,14 +272,19 @@ export class Bot {
                 ...this.baseContext
             };
 
-            // Run pre-command hooks
-            const hookResults = await this.hooks.trigger(`pre-command`, context, interaction);
-            // Attach output of hooks to context
-            context.hookContext = hookResults;
-            // Execute the command handler
-            await this.commandMap.trigger(command, context, interaction);
-            // Run post-command hooks
-            await this.hooks.trigger(`post-command`, context, interaction);
+            if (interaction.isCommand()) {
+                // Run pre-command hooks
+                const hookResults = await this.hooks.trigger(`pre-command`, context, interaction);
+                // Attach output of hooks to context
+                context.hookContext = hookResults;
+                // Execute the command handler
+                await this.commandMap.trigger(command, context, interaction);
+                // Run post-command hooks
+                await this.hooks.trigger(`post-command`, context, interaction);
+            } else if (interaction.isAutocomplete()) {
+                context.autocomplete = interaction.options.getFocused(true);
+                await this.commandMap.get(command).autocomplete(context, interaction);
+            }
         });
     }
 
