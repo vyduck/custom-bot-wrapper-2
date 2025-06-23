@@ -1,31 +1,16 @@
+import { Model } from "mongoose";
+import { Store } from "./store.js";
 /**
  * MongoStore class for managing data using a Mongoose model.
  * Extends the base Store class.
  */
-export class MongoStore extends Store {
-    /**
-     * Create a new MongoStore.
-     * @param {Object} options
-     * @param {string} options.name - Name of the store.
-     * @param {mongoose.Model} options.model - Mongoose model to use for storage.
-     * @param {Object} [defaults={}] - Default values for new documents.
-     */
-    constructor({ name, model, }: {
-        name: string;
-        model: mongoose.Model<any, any, any, any, any, any>;
-    }, defaults?: any);
-    /**
-     * Set the Mongoose model for this store.
-     * @param {mongoose.Model} value
-     */
-    set model(value: mongoose.Model<any, any, any, any, any, any>);
-    /**
-     * Get the Mongoose model for this store.
-     * @returns {mongoose.Model}
-     */
-    get model(): mongoose.Model<any, any, any, any, any, any>;
-    defaults: any;
-    _model: mongoose.Model<any, any, any, any, any, any>;
+export declare class MongoStore<T extends Document = Document> extends Store<T> {
+    model: Model<T>;
+    constructor(name: string, model: Model<T>);
+    create(data: Partial<T>): Promise<T>;
+    query(query: Partial<T>): Promise<T[]>;
+    fetchOne(query: Partial<T>): Promise<T | null>;
+    fetchAll(): Promise<T[]>;
+    update(query: Partial<T>, data: Partial<T>): Promise<T | null>;
+    delete(query: Partial<T>): Promise<boolean>;
 }
-import { Store } from "./store.js";
-import mongoose from "mongoose";

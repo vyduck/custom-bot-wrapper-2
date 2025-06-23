@@ -2,16 +2,23 @@
  * Base Store class for data storage backends.
  * Should be extended by specific store implementations.
  */
-export declare abstract class Store<T extends object = object> {
+export abstract class Store<T extends object = object> {
     name: string;
+
     /**
      * Create a new Store.
      */
-    constructor(name: string);
+    constructor(name: string) {
+        this.name = name;
+    }
+
     abstract create(data: Partial<T>): Promise<T>;
+    
     abstract query(query: Partial<T>): Promise<T[]>;
     abstract fetchOne(query: Partial<T>): Promise<T | null>;
     abstract fetchAll(): Promise<T[]>;
+
     abstract update(query: Partial<T>, data: Partial<T>): Promise<T | null>;
+    
     abstract delete(query: Partial<T>): Promise<boolean>;
 }

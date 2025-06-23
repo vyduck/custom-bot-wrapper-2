@@ -1,6 +1,6 @@
 import { SlashCommandBuilder, EmbedBuilder } from "discord.js";
+import { CommandHandler } from "../../index.js";
 import ms from "ms";
-import { CommandHandler } from "../../classes/command_handler.js";
 
 export default new CommandHandler({
     cName: "stats",

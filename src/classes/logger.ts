@@ -4,14 +4,12 @@ import { createLogger, format, transports } from 'winston';
  * Logger class for logging messages at various levels using Winston.
  */
 export class Logger {
+    logger: ReturnType<typeof createLogger>;
+
     /**
      * Create a new Logger instance.
-     * @param {Object} [options] - Logger options.
-     * @param {string} [options.level='info'] - Minimum log level.
-     * @param {string} [options.filePath='bot.log'] - File path for log file.
-     * @param {Array} [options.customStreams=[]] - Additional custom Winston transports.
      */
-    constructor(options = {}) {
+    constructor(options: { level?: string; filePath?: string; customStreams?: Array<any>; } = {}) {
         const { level = 'info', filePath = 'bot.log', customStreams = [] } = options;
 
         // Define custom log levels
@@ -42,33 +40,29 @@ export class Logger {
 
     /**
      * Log a debug message.
-     * @param {string} msg - The message to log.
      */
-    debug(msg) {
+    debug(msg: string) {
         this.logger.debug(msg);
     }
 
     /**
      * Log an info message.
-     * @param {string} msg - The message to log.
      */
-    info(msg) {
+    info(msg: string) {
         this.logger.info(msg);
     }
 
     /**
      * Log a warning message.
-     * @param {string} msg - The message to log.
      */
-    warn(msg) {
+    warn(msg: string) {
         this.logger.warn(msg);
     }
 
     /**
      * Log an error message.
-     * @param {string} msg - The message to log.
      */
-    error(msg) {
+    error(msg: string) {
         this.logger.error(msg);
     }
 }

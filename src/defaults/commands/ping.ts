@@ -1,5 +1,5 @@
 import { SlashCommandBuilder, EmbedBuilder } from "discord.js";
-import { CommandHandler } from "../../classes/command_handler.js";
+import { CommandHandler } from "../../index.js";
 
 export default new CommandHandler({
     cName: "ping",

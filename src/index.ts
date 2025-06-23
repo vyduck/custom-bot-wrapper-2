@@ -1,8 +1,5 @@
-import { Bot } from './classes/bot.js';
-import { CommandHandler } from './classes/command_handler.js';
-import { EventHandler } from './classes/event_handler.js';
+import { Bot ,CommandHandler, EventHandler, HookHandler, Logger } from './classes/index.js';
 import { MongoStore, ObjectStore, Store } from './stores/index.js'; 
-import { HookHandler } from './classes/hook_handler.js';
 
 /**
  * Main entry point for the custom-bot-wrapper-2 package.
@@ -24,7 +21,8 @@ export {
     HookHandler,
     MongoStore,
     ObjectStore,
-    Store
+    Store,
+    Logger
 };
 
 /**

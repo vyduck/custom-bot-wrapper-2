@@ -1,6 +1,7 @@
 import { SlashCommandBuilder, EmbedBuilder } from "discord.js";
-import { CommandHandler } from "../../classes/command_handler.js";
+import { CommandHandler } from "../../index.js";
 import { CustomPaginator } from "cdep";
+
 import ms from "ms";
 
 export default new CommandHandler({
@@ -12,11 +13,11 @@ export default new CommandHandler({
     category: "General",
     cooldown: [1, 5],
     handler: async function (context, interaction) {
-        const commands = Array.from(context.commandMap.values());
+        const commands = Array.from(context.commandMap.getAll());
 
         new CustomPaginator(interaction, {
             items: commands,
-            pagemaker: function (item) {
+            pagemaker: function (item: CommandHandler) {
                 return new EmbedBuilder()
                     .setTitle(`Help: ${item.cName}`)
                     .setDescription(
@@ -36,7 +37,9 @@ export default new CommandHandler({
                             inline: true
                         }
                     ]);
-            }
+            },
+            customRowMaker: () => undefined,
+            args: []
         });
     }
 });
