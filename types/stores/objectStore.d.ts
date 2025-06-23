@@ -7,7 +7,7 @@ export type ObjectWithId = {
  * In-memory object store for session-wide variables.
  * Extends the base Store class.
  */
-export declare class ObjectStore<T extends ObjectWithId = ObjectWithId> implements Store<T> {
+export declare class ObjectStore<T extends ObjectWithId = any> implements Store<T> {
     name: string;
     private store;
     readonly type = StoreTypes.ObjectStore;
