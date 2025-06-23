@@ -12,8 +12,8 @@ import {
     ChatInputCommandContext 
 } from "../../interfaces/context.js";
 
-import { Handler } from "./index.js";
-import { Logger } from "../index.js";
+import { Handler } from "./handler.js";
+import { Logger } from "../logger.js";
 
 declare const logger: Logger
 

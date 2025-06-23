@@ -1,4 +1,5 @@
-import { EventHandler, Logger } from "../../index.js";
+import { EventHandler } from "../../classes/handlers/event_handler.js";
+import { Logger } from "../../classes/logger.js";
 
 declare const logger: Logger;
 

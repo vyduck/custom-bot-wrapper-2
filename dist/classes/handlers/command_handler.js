@@ -1,6 +1,6 @@
 import { MessageFlags } from "discord.js";
 import ms from "ms";
-import { Handler } from "./index.js";
+import { Handler } from "./handler.js";
 /**
  * CommandHandler class for managing individual Discord slash commands.
  * Extends the base Handler class.

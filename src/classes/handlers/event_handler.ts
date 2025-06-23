@@ -1,6 +1,6 @@
 import { Client, ClientEvents } from "discord.js";
 import { EventContext } from "../../interfaces/context.js";
-import { Handler } from "./index.js";
+import { Handler } from "./handler.js";
 
 export type EventCallback<T extends any[] = any[]> = (context: EventContext, ...args: T) => Promise<any> | any;
 

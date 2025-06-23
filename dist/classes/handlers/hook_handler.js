@@ -1,4 +1,4 @@
-import { Handler } from "./index.js";
+import { Handler } from "./handler.js";
 /**
  * HookHandler class for managing individual hook handlers.
  * Extends the base Handler class.

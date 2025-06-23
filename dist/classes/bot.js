@@ -1,7 +1,10 @@
 import { AutocompleteInteraction, ChatInputCommandInteraction, Client, REST, Routes } from "discord.js";
 import mongoose from "mongoose";
-import { HandlerManager, CooldownManager, Logger } from "./index.js";
-import { defaultCommands, defaultEvents } from "../defaults/index.js";
+import { HandlerManager } from "./handler_manager.js";
+import { CooldownManager } from "./cooldown_manager.js";
+import { Logger } from "./logger.js";
+import defaultCommands from "../defaults/commands/index.js";
+import defaultEvents from "../defaults/events/index.js";
 export class Bot {
     client;
     cooldownManager = new CooldownManager();

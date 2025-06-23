@@ -1,4 +1,4 @@
-import { EventHandler } from "../../index.js";
+import { EventHandler } from "../../classes/handlers/event_handler.js";
 export default new EventHandler({
     hName: "ready",
     eName: "ready",

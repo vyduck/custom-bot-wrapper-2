@@ -1,6 +1,6 @@
 import { SlashCommandBuilder, ChatInputCommandInteraction, AutocompleteInteraction } from "discord.js";
 import { AutocompleteCommandContext, ChatInputCommandContext } from "../../interfaces/context.js";
-import { Handler } from "./index.js";
+import { Handler } from "./handler.js";
 export type AutocompleteCallback = (context: AutocompleteCommandContext, interaction: AutocompleteInteraction) => Promise<any> | any;
 export type ChatInputCallback = (context: ChatInputCommandContext, interaction: ChatInputCommandInteraction) => Promise<any> | any;
 /**

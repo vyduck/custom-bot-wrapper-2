@@ -1,6 +1,11 @@
 import { Client, ClientOptions } from "discord.js";
 import { Store } from "../stores/store.js";
-import { HandlerManager, CommandHandler, EventHandler, HookHandler, CooldownManager, Logger } from "./index.js";
+import { HandlerManager } from "./handler_manager.js";
+import { CommandHandler } from "./handlers/command_handler.js";
+import { EventHandler } from "./handlers/event_handler.js";
+import { HookHandler } from "./handlers/hook_handler.js";
+import { CooldownManager } from "./cooldown_manager.js";
+import { Logger } from "./logger.js";
 import { BaseContext, Database } from "../interfaces/index";
 export declare class Bot {
     client: Client;

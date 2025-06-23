@@ -1,4 +1,5 @@
-import { Handler, Logger } from './index.js';
+import { Handler } from './handlers/handler.js';
+import { Logger } from './logger.js';
 
 declare const logger: Logger
 

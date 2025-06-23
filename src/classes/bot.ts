@@ -2,9 +2,17 @@ import { AutocompleteInteraction, ChatInputCommandInteraction, Client, ClientEve
 import mongoose from "mongoose";
 
 import { Store } from "../stores/store.js";
-import { HandlerManager, CommandHandler, EventHandler, HookHandler, CooldownManager, Logger } from "./index.js"
 
-import { defaultCommands, defaultEvents } from "../defaults/index.js";
+import { HandlerManager } from "./handler_manager.js";
+import { CommandHandler } from "./handlers/command_handler.js";
+import { EventHandler } from "./handlers/event_handler.js";
+import { HookHandler } from "./handlers/hook_handler.js";
+
+import { CooldownManager } from "./cooldown_manager.js";
+import { Logger } from "./logger.js";
+
+import defaultCommands from "../defaults/commands/index.js";
+import defaultEvents from "../defaults/events/index.js";
 import { BaseContext, BaseCommandContext, ChatInputCommandContext, AutocompleteCommandContext, EventContext, Database } from "../interfaces/index";
 
 declare const logger: Logger;

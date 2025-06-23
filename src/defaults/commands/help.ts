@@ -1,5 +1,5 @@
 import { SlashCommandBuilder, EmbedBuilder } from "discord.js";
-import { CommandHandler } from "../../index.js";
+import { CommandHandler } from "../../classes/handlers/command_handler.js";
 import { CustomPaginator } from "cdep";
 
 import ms from "ms";

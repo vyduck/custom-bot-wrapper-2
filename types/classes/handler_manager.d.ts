@@ -1,4 +1,4 @@
-import { Handler } from './index.js';
+import { Handler } from './handlers/handler.js';
 /**
  * HandlerManager class for managing collections of Handler instances by event name and handler name.
  */

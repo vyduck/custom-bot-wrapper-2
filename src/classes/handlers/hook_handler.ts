@@ -3,7 +3,7 @@ import {
     EventContext 
 } from "../../interfaces/context.js";
 
-import { Handler } from "./index.js";
+import { Handler } from "./handler.js";
 
 export type HookCallback = (context: EventContext | ChatInputCommandContext, ...args: any[]) => Promise<object>;
 
