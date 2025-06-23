@@ -1,13 +1,14 @@
-import { Store, StoreTypes } from "./store.js";
+import { StoreTypes } from "./store.js";
 /**
  * MongoStore class for managing data using a Mongoose model.
  * Extends the base Store class.
  */
-export class MongoStore extends Store {
+export class MongoStore {
+    name;
     model;
     type = StoreTypes.MongoStore;
     constructor(name, model) {
-        super(name);
+        this.name = name;
         this.model = model;
     }
     async create(data) {
@@ -21,6 +22,12 @@ export class MongoStore extends Store {
     }
     async fetchAll() {
         return await this.model.find().exec();
+    }
+    async fetchOneOrCreate(query, data) {
+        const result = this.fetchOne(query);
+        if (result !== null)
+            return result;
+        return this.create(data);
     }
     async update(query, data) {
         return await this.model.findOneAndUpdate(query, data, { new: true }).exec();

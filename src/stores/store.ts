@@ -1,31 +1,21 @@
-/**
- * Base Store class for data storage backends.
- * Should be extended by specific store implementations.
- */
-export abstract class Store<T extends object = object> {
+export interface Store<T extends object = object> {
     name: string;
-    readonly type: StoreTypes = StoreTypes.Store
+    readonly type: StoreTypes;
 
-    /**
-     * Create a new Store.
-     */
-    constructor(name: string) {
-        this.name = name;
-    }
+    create(data: Partial<T>): Promise<T>;
 
-    abstract create(data: Partial<T>): Promise<T>;
+    query(query: Partial<T>): Promise<T[]>;
+    fetchOne(query: Partial<T>): Promise<T | null>;
+    fetchAll(): Promise<T[]>;
 
-    abstract query(query: Partial<T>): Promise<T[]>;
-    abstract fetchOne(query: Partial<T>): Promise<T | null>;
-    abstract fetchAll(): Promise<T[]>;
+    fetchOneOrCreate(query: Partial<T>, data: Partial<T>): Promise<T>;
 
-    abstract update(query: Partial<T>, data: Partial<T>): Promise<T | null>;
+    update(query: Partial<T>, data: Partial<T>): Promise<T | null>;
 
-    abstract delete(query: Partial<T>): Promise<boolean>;
+    delete(query: Partial<T>): Promise<boolean>;
 }
 
 export enum StoreTypes {
-    Store = 0,
-    MongoStore = 1,
-    ObjectStore = 2,
+    MongoStore,
+    ObjectStore
 }

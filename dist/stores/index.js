@@ -1,4 +1,3 @@
-import { Store } from "./store.js";
 import { MongoStore } from "./mongoStore.js";
 import { ObjectStore } from "./objectStore.js";
 /**
@@ -8,4 +7,4 @@ import { ObjectStore } from "./objectStore.js";
  * @exports MongoStore
  * @exports ObjectStore
  */
-export { Store, MongoStore, ObjectStore };
+export { MongoStore, ObjectStore };

@@ -3,5 +3,5 @@ import { MongoStore, ObjectStore, Store } from "../stores/index.js";
 
 export interface Database {
     connection: mongoose.Connection | null;
-    stores :{ [key: string]: Store | MongoStore | ObjectStore};
+    stores: Map<string, ObjectStore | MongoStore>;
 }

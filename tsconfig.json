@@ -10,7 +10,8 @@
     "rootDir": "src",
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "allowUnusedLabels": false
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist", "types"]

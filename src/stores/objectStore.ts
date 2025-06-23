@@ -2,21 +2,22 @@ import { Store, StoreTypes } from "./store.js";
 
 export type ObjectWithId = {
     id: string;
-    [key: string]: any;
-}
+    [key: string | number | symbol]: any;
+};
 
 /**
  * In-memory object store for session-wide variables.
  * Extends the base Store class.
  */
-export class ObjectStore extends Store<ObjectWithId> {
-    private store: Map<string, ObjectWithId> = new Map();
+export class ObjectStore<T extends ObjectWithId = ObjectWithId> implements Store<T> {
+    name: string;
+    private store: Map<string, T> = new Map();
     readonly type = StoreTypes.ObjectStore;
     constructor(name: string) {
-        super(name);
+        this.name = name;
     }
 
-    async create(data: ObjectWithId): Promise<ObjectWithId> {
+    async create(data: T): Promise<T> {
         if (!data.id) {
             throw new Error("Object must have an 'id' property.");
         }
@@ -24,8 +25,8 @@ export class ObjectStore extends Store<ObjectWithId> {
         return data;
     }
 
-    async query(query: Partial<ObjectWithId>): Promise<ObjectWithId[]> {
-        const results: ObjectWithId[] = [];
+    async query(query: Partial<T>): Promise<T[]> {
+        const results: T[] = [];
         for (const obj of this.store.values()) {
             let match = true;
             for (const key in query) {
@@ -38,17 +39,24 @@ export class ObjectStore extends Store<ObjectWithId> {
         return results;
     }
 
-    async fetchOne(query: ObjectWithId): Promise<ObjectWithId | null> {
+    async fetchOne(query: Partial<T>): Promise<T | null> {
         if (!query.id)
             throw new Error("Query must have an 'id' property.");
         return this.store.get(query.id) || null;
     }
     
-    async fetchAll(): Promise<ObjectWithId[]> {
+    async fetchAll(): Promise<T[]> {
         return Array.from(this.store.values());
     }
+
+    async fetchOneOrCreate(query: Partial<T>, data: T): Promise<T> {
+        const result = this.fetchOne(query);
+        if (result !== null)
+            return result;
+        return this.create(data);
+    }
     
-    async update(query: ObjectWithId, data: ObjectWithId): Promise<ObjectWithId | null> {
+    async update(query: Partial<T>, data: T): Promise<T | null> {
         if (!query.id)
             throw new Error("Query must have an 'id' property.");
         
@@ -57,7 +65,7 @@ export class ObjectStore extends Store<ObjectWithId> {
         return this.store.get(query.id);
     }
 
-    async delete(query: ObjectWithId): Promise<boolean> {
+    async delete(query: Partial<T>): Promise<boolean> {
         return this.store.delete(query.id);
     }
     

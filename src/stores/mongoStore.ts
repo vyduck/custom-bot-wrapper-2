@@ -5,11 +5,12 @@ import { Store, StoreTypes } from "./store.js";
  * MongoStore class for managing data using a Mongoose model.
  * Extends the base Store class.
  */
-export class MongoStore<T extends object = {}> extends Store<T> {
+export class MongoStore<T extends object = {}> implements Store<T> {
+    name: string;
     model: Model<T>;
     readonly type = StoreTypes.MongoStore;
     constructor(name: string, model: Model<T>) {
-        super(name);
+        this.name = name;
         this.model = model;
     }
     
@@ -27,6 +28,13 @@ export class MongoStore<T extends object = {}> extends Store<T> {
 
     async fetchAll(): Promise<T[]> {
         return await this.model.find().exec();
+    }
+
+    async fetchOneOrCreate(query: Partial<T>, data: Partial<T>): Promise<T> {
+        const result = this.fetchOne(query);
+        if (result !== null)
+            return result;
+        return this.create(data);
     }
 
     async update(query: FilterQuery<T>, data: Partial<T>): Promise<T | null> {

@@ -18,7 +18,7 @@ export class Bot {
         return global.logger;
     }
     database = {
-        stores: {},
+        stores: new Map(),
         connection: null
     };
     get baseContext() {
@@ -66,9 +66,7 @@ export class Bot {
             this.addHook(hook);
     }
     addStore(store) {
-        if (this.database.stores[store.name])
-            throw new Error(`Store with name ${store.name} already exists`);
-        this.database.stores[store.name] = store;
+        this.database.stores.set(store.name, store);
     }
     addStores(stores) {
         for (const store of stores)

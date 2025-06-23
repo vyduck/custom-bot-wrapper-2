@@ -1,13 +1,14 @@
-import { Store, StoreTypes } from "./store.js";
+import { StoreTypes } from "./store.js";
 /**
  * In-memory object store for session-wide variables.
  * Extends the base Store class.
  */
-export class ObjectStore extends Store {
+export class ObjectStore {
+    name;
     store = new Map();
     type = StoreTypes.ObjectStore;
     constructor(name) {
-        super(name);
+        this.name = name;
     }
     async create(data) {
         if (!data.id) {
@@ -38,6 +39,12 @@ export class ObjectStore extends Store {
     }
     async fetchAll() {
         return Array.from(this.store.values());
+    }
+    async fetchOneOrCreate(query, data) {
+        const result = this.fetchOne(query);
+        if (result !== null)
+            return result;
+        return this.create(data);
     }
     async update(query, data) {
         if (!query.id)

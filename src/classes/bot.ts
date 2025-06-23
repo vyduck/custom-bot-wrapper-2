@@ -1,8 +1,6 @@
 import { AutocompleteInteraction, ChatInputCommandInteraction, Client, ClientEvents, ClientOptions, REST, Routes } from "discord.js";
 import mongoose from "mongoose";
 
-import { Store } from "../stores/store.js";
-
 import { HandlerManager } from "./handler_manager.js";
 import { CommandHandler } from "./handlers/command_handler.js";
 import { EventHandler } from "./handlers/event_handler.js";
@@ -14,6 +12,9 @@ import { Logger } from "./logger.js";
 import defaultCommands from "../defaults/commands/index.js";
 import defaultEvents from "../defaults/events/index.js";
 import { BaseContext, BaseCommandContext, ChatInputCommandContext, AutocompleteCommandContext, EventContext, Database } from "../interfaces/index";
+import { ObjectStore } from "../stores/objectStore.js";
+import { MongoStore } from "../stores/mongoStore.js";
+import { Store } from "../stores/store.js";
 
 declare const logger: Logger;
 
@@ -32,7 +33,7 @@ export class Bot {
     }
 
     database: Database = {
-        stores: {},
+        stores: new Map(),
         connection: null
     };
 
@@ -92,14 +93,11 @@ export class Bot {
         for (const hook of hooks) this.addHook(hook);
     }
 
-    addStore(store: Store) {
-        if (this.database.stores[store.name])
-            throw new Error(`Store with name ${store.name} already exists`);
-
-        this.database.stores[store.name] = store;
+    addStore(store: MongoStore | ObjectStore) {
+        this.database.stores.set(store.name, store);
     }
 
-    addStores(stores: Store[]) {
+    addStores(stores: (MongoStore | ObjectStore)[]) {
         for (const store of stores) this.addStore(store);
     }
 
