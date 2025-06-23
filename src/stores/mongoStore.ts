@@ -31,10 +31,10 @@ export class MongoStore<T extends object = any> implements Store<T> {
     }
 
     async fetchOneOrCreate(query: Partial<T>, data: Partial<T>): Promise<T> {
-        const result = this.fetchOne(query);
+        const result = await this.fetchOne(query);
         if (result !== null)
             return result;
-        return this.create(data);
+        return await this.create(data);
     }
 
     async update(query: FilterQuery<T>, data: Partial<T>): Promise<T | null> {

@@ -24,10 +24,10 @@ export class MongoStore {
         return await this.model.find().exec();
     }
     async fetchOneOrCreate(query, data) {
-        const result = this.fetchOne(query);
+        const result = await this.fetchOne(query);
         if (result !== null)
             return result;
-        return this.create(data);
+        return await this.create(data);
     }
     async update(query, data) {
         return await this.model.findOneAndUpdate(query, data, { new: true }).exec();
