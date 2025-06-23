@@ -1,12 +1,12 @@
 import { AutocompleteFocusedOption, AutocompleteInteraction, ChatInputCommandInteraction, Client } from "discord.js";
 import { HandlerManager } from "../classes/handler_manager";
-import { Store } from "../stores";
 import { CooldownManager } from "../classes/cooldown_manager";
+import { Database } from "./database";
 
 export interface BaseContext {
     commandMap: HandlerManager;
     configMap: Map<string, any>;
-    database: { [key: string]: Store };
+    database: Database['stores'];
     client: Client;
     cooldownManager: CooldownManager;
 }

@@ -1,4 +1,4 @@
-import { Store } from "./store.js";
+import { Store, StoreTypes } from "./store.js";
 
 export type ObjectWithId = {
     id: string;
@@ -11,6 +11,7 @@ export type ObjectWithId = {
  */
 export class ObjectStore extends Store<ObjectWithId> {
     private store: Map<string, ObjectWithId> = new Map();
+    readonly type = StoreTypes.ObjectStore;
     constructor(name: string) {
         super(name);
     }

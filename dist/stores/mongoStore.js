@@ -1,10 +1,11 @@
-import { Store } from "./store.js";
+import { Store, StoreTypes } from "./store.js";
 /**
  * MongoStore class for managing data using a Mongoose model.
  * Extends the base Store class.
  */
 export class MongoStore extends Store {
     model;
+    type = StoreTypes.MongoStore;
     constructor(name, model) {
         super(name);
         this.model = model;

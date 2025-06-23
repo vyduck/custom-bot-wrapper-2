@@ -1,4 +1,4 @@
-import { Store } from "./store.js";
+import { Store, StoreTypes } from "./store.js";
 export type ObjectWithId = {
     id: string;
     [key: string]: any;
@@ -9,6 +9,7 @@ export type ObjectWithId = {
  */
 export declare class ObjectStore extends Store<ObjectWithId> {
     private store;
+    readonly type = StoreTypes.ObjectStore;
     constructor(name: string);
     create(data: ObjectWithId): Promise<ObjectWithId>;
     query(query: Partial<ObjectWithId>): Promise<ObjectWithId[]>;

@@ -1,16 +1,17 @@
-import { Model } from "mongoose";
-import { Store } from "./store.js";
+import { FilterQuery, Model } from "mongoose";
+import { Store, StoreTypes } from "./store.js";
 /**
  * MongoStore class for managing data using a Mongoose model.
  * Extends the base Store class.
  */
-export declare class MongoStore<T extends Document = Document> extends Store<T> {
+export declare class MongoStore<T extends object = {}> extends Store<T> {
     model: Model<T>;
+    readonly type = StoreTypes.MongoStore;
     constructor(name: string, model: Model<T>);
     create(data: Partial<T>): Promise<T>;
-    query(query: Partial<T>): Promise<T[]>;
-    fetchOne(query: Partial<T>): Promise<T | null>;
+    query(query: FilterQuery<T>): Promise<T[]>;
+    fetchOne(query: FilterQuery<T>): Promise<T | null>;
     fetchAll(): Promise<T[]>;
-    update(query: Partial<T>, data: Partial<T>): Promise<T | null>;
-    delete(query: Partial<T>): Promise<boolean>;
+    update(query: FilterQuery<T>, data: Partial<T>): Promise<T | null>;
+    delete(query: FilterQuery<T>): Promise<boolean>;
 }

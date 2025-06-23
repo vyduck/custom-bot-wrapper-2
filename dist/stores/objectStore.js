@@ -1,10 +1,11 @@
-import { Store } from "./store.js";
+import { Store, StoreTypes } from "./store.js";
 /**
  * In-memory object store for session-wide variables.
  * Extends the base Store class.
  */
 export class ObjectStore extends Store {
     store = new Map();
+    type = StoreTypes.ObjectStore;
     constructor(name) {
         super(name);
     }

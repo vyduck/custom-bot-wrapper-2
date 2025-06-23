@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
-import { Store } from "../stores/index.js";
+import { MongoStore, ObjectStore, Store } from "../stores/index.js";
 
 export interface Database {
     connection: mongoose.Connection | null;
-    stores :{ [key: string]: Store };
+    stores :{ [key: string]: Store | MongoStore | ObjectStore};
 }

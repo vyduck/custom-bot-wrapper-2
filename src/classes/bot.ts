@@ -59,7 +59,7 @@ export class Bot {
     }
 
     addCommandHandler(command: CommandHandler) {
-        if (this.commandMap.has(command.cName)) 
+        if (this.commandMap.has(command.cName))
             throw new Error(`Command with name ${command.cName} already exists`);
 
         this.commandMap.addHandler(command);
@@ -71,7 +71,7 @@ export class Bot {
     }
 
     addEventHandler(event: EventHandler) {
-        if (this.eventMap.has(event.hName)) 
+        if (this.eventMap.has(event.hName))
             throw new Error(`Event with handler name ${event.hName} already exists under event ${event.eName}`);
 
         this.eventMap.addHandler(event);
@@ -118,17 +118,17 @@ export class Bot {
 
                     // Run pre-event hooks
                     const hookResults = await this.hooks.trigger(`pre-event`, context, ...args);
-                    
+
                     // Attach output of hooks to context
                     context.hookContext = hookResults;
-                    
+
                     // Execute the event handler
                     try {
                         await this.eventMap.trigger(event, context, ...args)
                     } catch (error) {
                         logger.error(`Error executing event ${event}: ${error.message}`);
                     }
-                    
+
                     // Run post-event hooks
                     await this.hooks.trigger(`post-event`, context, ...args)
                 });

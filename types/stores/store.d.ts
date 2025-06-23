@@ -4,6 +4,7 @@
  */
 export declare abstract class Store<T extends object = object> {
     name: string;
+    readonly type: StoreTypes;
     /**
      * Create a new Store.
      */
@@ -14,4 +15,9 @@ export declare abstract class Store<T extends object = object> {
     abstract fetchAll(): Promise<T[]>;
     abstract update(query: Partial<T>, data: Partial<T>): Promise<T | null>;
     abstract delete(query: Partial<T>): Promise<boolean>;
+}
+export declare enum StoreTypes {
+    Store = 0,
+    MongoStore = 1,
+    ObjectStore = 2
 }
