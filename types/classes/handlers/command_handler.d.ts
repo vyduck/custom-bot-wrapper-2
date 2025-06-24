@@ -1,4 +1,4 @@
-import { SlashCommandBuilder, ChatInputCommandInteraction, AutocompleteInteraction, SharedSlashCommand } from "discord.js";
+import { ChatInputCommandInteraction, AutocompleteInteraction, SharedSlashCommand } from "discord.js";
 import { AutocompleteCommandContext, ChatInputCommandContext } from "../../interfaces/context.js";
 import { Handler } from "./handler.js";
 export type AutocompleteCallback = (context: AutocompleteCommandContext, interaction: AutocompleteInteraction) => Promise<any> | any;
@@ -19,7 +19,7 @@ export declare class CommandHandler extends Handler<ChatInputCallback> {
     constructor({ handler, cName, builder, description, category, cooldown, autocomplete }: {
         handler: ChatInputCallback;
         cName: string;
-        builder: SlashCommandBuilder;
+        builder: SharedSlashCommand;
         description?: string;
         category?: string;
         cooldown?: [number, number];

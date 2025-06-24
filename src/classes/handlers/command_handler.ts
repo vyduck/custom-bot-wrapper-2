@@ -1,5 +1,4 @@
 import {
-    SlashCommandBuilder,
     MessageFlags,
     ChatInputCommandInteraction,
     AutocompleteInteraction,
@@ -46,7 +45,7 @@ export class CommandHandler extends Handler<ChatInputCallback> {
     }: {
         handler: ChatInputCallback;
         cName: string;
-        builder: SlashCommandBuilder;
+        builder: SharedSlashCommand;
         description?: string;
         category?: string;
         cooldown?: [number, number];
