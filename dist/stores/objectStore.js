@@ -66,7 +66,7 @@ export class ObjectStore {
      * @returns {Promise<T>} The found or created object.
      */
     async fetchOneOrCreate(query, data) {
-        const result = this.fetchOne(query);
+        const result = await this.fetchOne(query);
         if (result !== null)
             return result;
         return this.create(data);
