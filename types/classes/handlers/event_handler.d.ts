@@ -9,6 +9,9 @@ export type EventCallback<T extends any[] = any[]> = (context: EventContext, ...
 export declare class EventHandler<Event extends keyof ClientEvents = any> extends Handler<EventCallback> {
     once: boolean;
     eName: Event;
+    /**
+     * Creates an instance of EventHandler.
+     */
     constructor({ handler, eName, hName, once }: {
         handler: EventCallback<ClientEvents[Event]>;
         hName: string;

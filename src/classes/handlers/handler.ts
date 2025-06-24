@@ -7,6 +7,9 @@ export class Handler<T extends Function = Function> {
     hName: string;
     handler: T;
 
+    /**
+     * Creates an instance of Handler.
+     */
     constructor({
         eName, hName, handler
     }: { eName: string; hName: string; handler: T; }) {
@@ -15,6 +18,9 @@ export class Handler<T extends Function = Function> {
         this.handler = handler;
     }
 
+    /**
+     * Executes the handler function with provided arguments.
+     */
     async execute(...args: any[]): Promise<any> {
         return await this.handler(...args);
     }

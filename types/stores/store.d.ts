@@ -1,4 +1,4 @@
-export interface Store<T extends object = object> {
+export interface Store<T extends object = any> {
     name: string;
     readonly type: StoreTypes;
     create(data: Partial<T>): Promise<T>;

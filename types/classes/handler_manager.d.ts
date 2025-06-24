@@ -13,6 +13,10 @@ export declare class HandlerManager<T extends Handler = Handler> {
      * Add a handler to the manager.
      */
     addHandler(handler: T): void;
+    /**
+     * Trigger all handlers for a given event name with the provided arguments.
+     * Returns an object mapping handler names to their results.
+     */
     trigger(name: string, ...args: any[]): Promise<object>;
     /**
      * Check if a handler with the given handler name exists.

@@ -5,6 +5,9 @@ import { Handler } from "./handler.js";
  */
 export class EventHandler extends Handler {
     once;
+    /**
+     * Creates an instance of EventHandler.
+     */
     constructor({ handler, eName, hName, once = false }) {
         super({
             handler,

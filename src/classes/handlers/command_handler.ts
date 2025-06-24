@@ -31,6 +31,9 @@ export class CommandHandler extends Handler<ChatInputCallback> {
     cooldown: [number, number];
     autocomplete: Function;
 
+    /**
+     * Creates an instance of CommandHandler.
+     */
     constructor({
         handler,
         cName,
@@ -60,6 +63,10 @@ export class CommandHandler extends Handler<ChatInputCallback> {
         this.autocomplete = autocomplete;
     }
 
+    /**
+     * Executes the command with the provided context and interaction.
+     * Also checks for cooldowns.
+     */
     async execute(context: ChatInputCommandContext, interaction: ChatInputCommandInteraction): Promise<void> {
         const { cooldownManager } = context;
         const userId = interaction.user.id;
@@ -104,6 +111,9 @@ export class CommandHandler extends Handler<ChatInputCallback> {
         }
     }
 
+    /**
+     * Returns the command name.
+     */
     get cName(): string {
         return this.eName;
     }

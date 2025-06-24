@@ -11,6 +11,9 @@ export class CommandHandler extends Handler {
     category;
     cooldown;
     autocomplete;
+    /**
+     * Creates an instance of CommandHandler.
+     */
     constructor({ handler, cName, builder, description = '', category = 'General', cooldown = [1, 1], autocomplete = null }) {
         super({
             eName: cName,
@@ -23,6 +26,10 @@ export class CommandHandler extends Handler {
         this.cooldown = cooldown;
         this.autocomplete = autocomplete;
     }
+    /**
+     * Executes the command with the provided context and interaction.
+     * Also checks for cooldowns.
+     */
     async execute(context, interaction) {
         const { cooldownManager } = context;
         const userId = interaction.user.id;
@@ -62,6 +69,9 @@ export class CommandHandler extends Handler {
             });
         }
     }
+    /**
+     * Returns the command name.
+     */
     get cName() {
         return this.eName;
     }

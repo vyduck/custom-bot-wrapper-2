@@ -19,6 +19,10 @@ export class HandlerManager {
             this.handlers.set(eventName, new Map());
         this.handlers.get(eventName).set(handler.hName, handler);
     }
+    /**
+     * Trigger all handlers for a given event name with the provided arguments.
+     * Returns an object mapping handler names to their results.
+     */
     async trigger(name, ...args) {
         if (!this.handlers.has(name))
             return {};

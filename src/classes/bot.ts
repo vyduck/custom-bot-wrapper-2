@@ -12,12 +12,17 @@ import { Logger } from "./logger.js";
 import defaultCommands from "../defaults/commands/index.js";
 import defaultEvents from "../defaults/events/index.js";
 import { BaseContext, BaseCommandContext, ChatInputCommandContext, AutocompleteCommandContext, EventContext, Database } from "../interfaces/index";
-import { ObjectStore } from "../stores/objectStore.js";
-import { MongoStore } from "../stores/mongoStore.js";
 import { Store } from "../stores/store.js";
 
 declare const logger: Logger;
 
+/**
+ * Bot class for managing the Discord bot instance.
+ * It handles commands, events, hooks, and database connections.
+ * It also provides methods to add command handlers, event handlers, and hooks.
+ * It initializes the Discord client and connects to the MongoDB database.
+ * It also provides methods to start the bot, attach events, and publish commands.
+ */
 export class Bot {
     client: Client;
     cooldownManager: CooldownManager = new CooldownManager();
@@ -32,12 +37,12 @@ export class Bot {
         return global.logger;
     }
 
-    database: Database = {
+    private database: Database = {
         stores: new Map(),
         connection: null
     };
 
-    get baseContext(): BaseContext {
+    private get baseContext(): BaseContext {
         return {
             commandMap: this.commandMap,
             configMap: this.configMap,
@@ -47,6 +52,9 @@ export class Bot {
         }
     }
 
+    /**
+     * Creates an instance of the Bot class.
+     */
     constructor({
         clientOptions, options
     }: { clientOptions: ClientOptions; options: { token: string; clientId: string; mongoUri: string; }; }) {
@@ -59,6 +67,9 @@ export class Bot {
         this.client = new Client(clientOptions);
     }
 
+    /**
+     * Adds a command handler to the bot.
+     */
     addCommandHandler(command: CommandHandler) {
         if (this.commandMap.has(command.cName))
             throw new Error(`Command with name ${command.cName} already exists`);
@@ -67,10 +78,16 @@ export class Bot {
         this.cooldownManager.addCommand(command.cName, command.cooldown);
     }
 
+    /**
+     * Adds multiple command handlers to the bot.
+     */
     addCommands(commands: CommandHandler[]) {
         for (const command of commands) this.addCommandHandler(command);
     }
 
+    /**
+     * Adds an event handler to the bot.
+     */
     addEventHandler(event: EventHandler) {
         if (this.eventMap.has(event.hName))
             throw new Error(`Event with handler name ${event.hName} already exists under event ${event.eName}`);
@@ -78,10 +95,16 @@ export class Bot {
         this.eventMap.addHandler(event);
     }
 
+    /**
+     * Adds multiple event handlers to the bot.
+     */
     addEvents(events: EventHandler[]) {
         for (const event of events) this.addEventHandler(event);
     }
 
+    /**
+     * Adds a hook handler to the bot.
+     */
     addHook(hook: HookHandler) {
         if (this.hooks.has(hook.hName))
             throw new Error(`Hook with name ${hook.hName} already exists`);
@@ -89,18 +112,31 @@ export class Bot {
         this.hooks.addHandler(hook);
     }
 
+    /**
+     * Adds multiple hook handlers to the bot.
+     */
     addHooks(hooks: HookHandler[]) {
         for (const hook of hooks) this.addHook(hook);
     }
 
-    addStore(store: MongoStore | ObjectStore) {
+    /**
+     * Adds a store to the bot's database.
+     */
+    addStore(store: Store) {
         this.database.stores.set(store.name, store);
     }
 
-    addStores(stores: (MongoStore | ObjectStore)[]) {
+    /**
+     * Adds multiple stores to the bot's database.
+     */
+    addStores(stores: (Store)[]) {
         for (const store of stores) this.addStore(store);
     }
 
+    /**
+     * Attaches all event handlers to the Discord client.
+     * It also runs pre-event and post-event hooks.
+     */
     private attachEvents() {
         const allEvents = Array.from(this.eventMap.handlers.keys());
         for (const event of allEvents) {
@@ -134,12 +170,20 @@ export class Bot {
         logger.debug(`Attached ${allEvents.length} events.`);
     }
 
+    /**
+     * Adds default events to the bot.
+     * This method is called during the bot's initialization.
+     */
     private addDefaultEvents() {
         logger.debug("Adding default events...");
         for (const event of defaultEvents) this.addEventHandler(event);
         logger.debug(`Added ${defaultEvents.length} default events.`);
     }
 
+    /**
+     * Creates a logger instance for the bot.
+     * This method initializes the global logger with a file path and log level.
+     */
     private createLogger() {
         global.logger = new Logger({
             level: 'info',
@@ -149,6 +193,10 @@ export class Bot {
         logger.debug("Logger initialized.");
     }
 
+    /**
+     * Attaches command handlers to the Discord client.
+     * It listens for interaction events and executes the appropriate command handler.
+     */
     private async attachCommandsHandler() {
         this.client.on('interactionCreate', async (interaction) => {
             if (
@@ -178,6 +226,10 @@ export class Bot {
         });
     }
 
+    /**
+     * Adds default commands to the bot.
+     * This method is called during the bot's initialization.
+     */
     private async addDefaultCommands() {
         logger.debug("Adding default commands...");
         for (const command of defaultCommands)
@@ -185,6 +237,11 @@ export class Bot {
         logger.debug(`Added ${defaultCommands.length} default commands.`);
     }
 
+    /**
+     * Publishes all commands to Discord.
+     * This method uses the Discord REST API to register the commands.
+     * It requires the bot's token and client ID from the configuration map.
+     */
     private async publishCommands() {
         logger.debug("Publishing commands to Discord...");
         const commands = this.commandMap.getAll().map(cmd => cmd.builder.toJSON());
@@ -203,6 +260,11 @@ export class Bot {
         logger.debug(`Published ${commands.length} commands.`);
     }
 
+    /**
+     * Connects to the MongoDB database using Mongoose.
+     * It retrieves the Mongo URI from the configuration map and establishes a connection.
+     * If the connection fails, it logs an error and throws an exception.
+     */
     private async connectToDatabase() {
         if (!this.configMap.has('mongoUri'))
             throw new Error('Mongo URI is not set in the configuration');
@@ -217,6 +279,11 @@ export class Bot {
         }
     }
 
+    /**
+     * Logs in to Discord using the bot's token.
+     * It retrieves the token from the configuration map and calls the login method on the client.
+     * If the login fails, it logs an error and throws an exception.
+     */
     private async login() {
         if (!this.configMap.has('token')) {
             throw new Error('Token is not set in the configuration');
@@ -230,6 +297,11 @@ export class Bot {
         }
     }
 
+    /**
+     * Starts the bot by attaching events, commands, and connecting to the database.
+     * It also logs in to Discord.
+     * This method is the entry point for starting the bot.
+     */
     async start() {
         if (!this.configMap.has('token')) {
             throw new Error('Token is not set in the configuration');

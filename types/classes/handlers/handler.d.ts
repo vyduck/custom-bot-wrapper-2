@@ -6,10 +6,16 @@ export declare class Handler<T extends Function = Function> {
     eName: string;
     hName: string;
     handler: T;
+    /**
+     * Creates an instance of Handler.
+     */
     constructor({ eName, hName, handler }: {
         eName: string;
         hName: string;
         handler: T;
     });
+    /**
+     * Executes the handler function with provided arguments.
+     */
     execute(...args: any[]): Promise<any>;
 }

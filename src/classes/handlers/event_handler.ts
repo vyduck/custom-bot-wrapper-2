@@ -12,6 +12,9 @@ export class EventHandler<Event extends keyof ClientEvents = any> extends Handle
     once: boolean;
     declare eName: Event;
 
+    /**
+     * Creates an instance of EventHandler.
+     */
     constructor({
         handler,
         eName,
