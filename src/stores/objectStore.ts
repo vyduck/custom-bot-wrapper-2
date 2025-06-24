@@ -75,7 +75,7 @@ export class ObjectStore<T extends ObjectWithId = any> implements Store<T> {
      * @returns {Promise<T>} The found or created object.
      */
     async fetchOneOrCreate(query: Partial<T>, data: T): Promise<T> {
-        const result = this.fetchOne(query);
+        const result = await this.fetchOne(query);
         if (result !== null)
             return result;
         return this.create(data);
