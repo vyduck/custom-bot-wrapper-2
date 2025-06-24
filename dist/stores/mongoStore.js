@@ -69,7 +69,7 @@ export class MongoStore {
      * @returns {boolean} True if a document was deleted, otherwise false.
      */
     async delete(query) {
-        const result = await this.model.deleteOne(query).exec();
+        const result = await this.model.deleteMany(query).exec();
         return result.deletedCount > 0;
     }
 }

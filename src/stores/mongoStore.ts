@@ -78,7 +78,7 @@ export class MongoStore<T extends object = any> implements Store<T> {
      * @returns {boolean} True if a document was deleted, otherwise false.
      */
     async delete(query: FilterQuery<T>): Promise<boolean>{
-        const result = await this.model.deleteOne(query).exec();
+        const result = await this.model.deleteMany(query).exec();
         return result.deletedCount > 0;
     }    
 }

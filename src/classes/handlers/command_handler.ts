@@ -2,7 +2,8 @@ import {
     SlashCommandBuilder,
     MessageFlags,
     ChatInputCommandInteraction,
-    AutocompleteInteraction
+    AutocompleteInteraction,
+    SharedSlashCommand
 } from "discord.js";
 
 import ms from "ms";
@@ -25,7 +26,7 @@ export type ChatInputCallback = (context: ChatInputCommandContext, interaction: 
  * Extends the base Handler class.
  */
 export class CommandHandler extends Handler<ChatInputCallback> {
-    builder: SlashCommandBuilder;
+    builder: SharedSlashCommand;
     description: string;
     category: string;
     cooldown: [number, number];
