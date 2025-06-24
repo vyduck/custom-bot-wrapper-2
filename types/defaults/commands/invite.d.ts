@@ -1,3 +1,3 @@
+import { CommandHandler } from "../../classes/handlers/command_handler.js";
 declare const _default: CommandHandler;
 export default _default;
-import { CommandHandler } from "../../classes/command_handler.js";

@@ -1,34 +1,58 @@
+import { Store, StoreTypes } from "./store.js";
+export type ObjectWithId = {
+    id: string;
+    [key: string | number | symbol]: any;
+};
 /**
  * In-memory object store for session-wide variables.
  * Extends the base Store class.
  */
-export class ObjectStore extends Store {
+export declare class ObjectStore<T extends ObjectWithId = any> implements Store<T> {
+    name: string;
+    private store;
+    readonly type = StoreTypes.ObjectStore;
+    constructor(name: string);
     /**
-     * Create a new ObjectStore.
-     * @param {Object} options
-     * @param {string} options.name - Name of the store.
-     * @param {Object} [options.defaults={}] - Default values for new entries.
+     * Creates a new object in the store.
+     * @param {T} data - The object to create, must have an 'id' property.
+     * @returns {Promise<T>} The created object.
      */
-    constructor({ name, defaults }?: {
-        name: string;
-        defaults?: any;
-    });
-    _store: Map<any, any>;
-    defaults: any;
+    create(data: T): Promise<T>;
     /**
-     * Update a document in the store.
-     * @param {Object} query - Query object. Must have an _id or id property.
-     * @param {Object} update - Update data.
-     * @returns {Promise<any>} The updated document.
-     * @throws {Error} If query does not have an _id or id property.
+     * Queries the store for objects matching the provided query.
+     * @param {Partial<T>} query - The query to filter objects by.
+     * @returns {Promise<T[]>} An array of objects matching the query.
      */
-    update(query: any, update: any): Promise<any>;
+    query(query: Partial<T>): Promise<T[]>;
     /**
-     * Delete a document from the store.
-     * @param {Object} query - Query object. Must have an _id or id property.
-     * @returns {Promise<boolean>} True if deleted, false otherwise.
-     * @throws {Error} If query does not have an _id or id property.
+     * Fetches a single object from the store by its id.
+     * @param {Partial<T>} query - The query to filter objects by, must have an 'id' property.
+     * @returns {Promise<T | null>} The object if found, otherwise null.
      */
-    delete(query: any): Promise<boolean>;
+    fetchOne(query: Partial<T>): Promise<T | null>;
+    /**
+     * Fetches all objects from the store.
+     * @returns {Promise<T[]>} An array of all objects in the store.
+     */
+    fetchAll(): Promise<T[]>;
+    /**
+     * Fetches an object by its id or creates a new one if it doesn't exist.
+     * @param {Partial<T>} query - The query to filter objects by, must have an 'id' property.
+     * @param {T} data - The data to create the object with if it doesn't exist.
+     * @returns {Promise<T>} The found or created object.
+     */
+    fetchOneOrCreate(query: Partial<T>, data: T): Promise<T>;
+    /**
+     * Updates an object in the store.
+     * @param {Partial<T>} query - The query to filter objects by, must have an 'id' property.
+     * @param {T} data - The data to update the object with.
+     * @returns {Promise<T | null>} The updated object if found, otherwise null.
+     */
+    update(query: Partial<T>, data: T): Promise<T | null>;
+    /**
+     * Deletes an object from the store by its id.
+     * @param {Partial<T>} query - The query to filter objects by, must have an 'id' property.
+     * @returns {Promise<boolean>} True if the object was deleted, otherwise false.
+     */
+    delete(query: Partial<T>): Promise<boolean>;
 }
-import { Store } from "./store.js";

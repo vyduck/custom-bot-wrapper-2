@@ -1,3 +1,3 @@
-declare const _default: EventHandler;
+import { EventHandler } from "../../classes/handlers/event_handler.js";
+declare const _default: EventHandler<"ready">;
 export default _default;
-import { EventHandler } from "../../classes/event_handler.js";

@@ -1,31 +1,55 @@
+import { FilterQuery, Model } from "mongoose";
+import { Store, StoreTypes } from "./store.js";
 /**
  * MongoStore class for managing data using a Mongoose model.
  * Extends the base Store class.
  */
-export class MongoStore extends Store {
+export declare class MongoStore<T extends object = any> implements Store<T> {
+    name: string;
+    private model;
+    readonly type = StoreTypes.MongoStore;
+    constructor(name: string, model: Model<T>);
     /**
-     * Create a new MongoStore.
-     * @param {Object} options
-     * @param {string} options.name - Name of the store.
-     * @param {mongoose.Model} options.model - Mongoose model to use for storage.
-     * @param {Object} [defaults={}] - Default values for new documents.
+     * Creates a new document in the MongoDB collection.
+     * @param {Partial<T>} data - The data to create the document with.
+     * @returns {T} The created document.
      */
-    constructor({ name, model, }: {
-        name: string;
-        model: mongoose.Model<any, any, any, any, any, any>;
-    }, defaults?: any);
+    create(data: Partial<T>): Promise<T>;
     /**
-     * Set the Mongoose model for this store.
-     * @param {mongoose.Model} value
+     * Queries the MongoDB collection with the provided filter.
+     * @param {FilterQuery<T>} query - The filter to apply to the query.
+     * @returns {T[]} An array of documents matching the query.
      */
-    set model(value: mongoose.Model<any, any, any, any, any, any>);
+    query(query: FilterQuery<T>): Promise<T[]>;
     /**
-     * Get the Mongoose model for this store.
-     * @returns {mongoose.Model}
+     * Fetches a single document from the MongoDB collection.
+     * @param {FilterQuery<T>} query - The filter to apply to the query.
+     * @returns {T | null} The document if found, otherwise null.
      */
-    get model(): mongoose.Model<any, any, any, any, any, any>;
-    defaults: any;
-    _model: mongoose.Model<any, any, any, any, any, any>;
+    fetchOne(query: FilterQuery<T>): Promise<T | null>;
+    /**
+     * Fetches all documents from the MongoDB collection.
+     * @returns {T[]} An array of all documents in the collection.
+     */
+    fetchAll(): Promise<T[]>;
+    /**
+     * Fetches a document or creates a new one if it doesn't exist.
+     * @param {Partial<T>} query - The filter to apply to the query.
+     * @param {Partial<T>} data - The data to create the document with if it doesn't exist.
+     * @returns {T} The found or created document.
+     */
+    fetchOneOrCreate(query: Partial<T>, data: Partial<T>): Promise<T>;
+    /**
+     * Updates a document in the MongoDB collection.
+     * @param {FilterQuery<T>} query - The filter to apply to the query.
+     * @param {Partial<T>} data - The data to update the document with.
+     * @returns {T | null} The updated document if found, otherwise null.
+     */
+    update(query: FilterQuery<T>, data: Partial<T>): Promise<T | null>;
+    /**
+     * Deletes a document from the MongoDB collection.
+     * @param {FilterQuery<T>} query - The filter to apply to the query.
+     * @returns {boolean} True if a document was deleted, otherwise false.
+     */
+    delete(query: FilterQuery<T>): Promise<boolean>;
 }
-import { Store } from "./store.js";
-import mongoose from "mongoose";
