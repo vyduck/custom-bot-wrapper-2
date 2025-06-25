@@ -42,7 +42,7 @@ export class Bot {
         this.configMap.set('token', options.token);
         this.configMap.set('clientId', options.clientId);
         this.configMap.set('mongoUri', options.mongoUri);
-        this.createLogger();
+        this.createLogger(options.customStreams);
         this.client = new Client(clientOptions);
     }
     /**
@@ -139,11 +139,11 @@ export class Bot {
      * Creates a logger instance for the bot.
      * This method initializes the global logger with a file path and log level.
      */
-    createLogger() {
+    createLogger(customStreams = []) {
         global.logger = new Logger({
             level: 'info',
             filePath: 'bot.log',
-            customStreams: []
+            customStreams
         });
         logger.debug("Logger initialized.");
     }

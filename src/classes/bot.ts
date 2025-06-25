@@ -11,6 +11,7 @@ import { Logger } from "./logger.js";
 
 import { BaseContext, BaseCommandContext, ChatInputCommandContext, AutocompleteCommandContext, EventContext, Database } from "../interfaces/index";
 import { Store } from "../stores/store.js";
+import { Transports } from "winston/lib/winston/transports/index.js";
 
 declare const logger: Logger;
 
@@ -55,12 +56,12 @@ export class Bot {
      */
     constructor({
         clientOptions, options
-    }: { clientOptions: ClientOptions; options: { token: string; clientId: string; mongoUri: string; }; }) {
+    }: { clientOptions: ClientOptions; options: { token: string; clientId: string; mongoUri: string; customStreams?: Transports[] }; }) {
         this.configMap.set('token', options.token);
         this.configMap.set('clientId', options.clientId);
         this.configMap.set('mongoUri', options.mongoUri);
 
-        this.createLogger();
+        this.createLogger(options.customStreams);
 
         this.client = new Client(clientOptions);
     }
@@ -172,11 +173,11 @@ export class Bot {
      * Creates a logger instance for the bot.
      * This method initializes the global logger with a file path and log level.
      */
-    private createLogger() {
+    private createLogger(customStreams: Transports[] = []) {
         global.logger = new Logger({
             level: 'info',
             filePath: 'bot.log',
-            customStreams: []
+            customStreams
         });
         logger.debug("Logger initialized.");
     }

@@ -6,6 +6,7 @@ import { HookHandler } from "./handlers/hook_handler.js";
 import { CooldownManager } from "./cooldown_manager.js";
 import { Logger } from "./logger.js";
 import { Store } from "../stores/store.js";
+import { Transports } from "winston/lib/winston/transports/index.js";
 /**
  * Bot class for managing the Discord bot instance.
  * It handles commands, events, hooks, and database connections.
@@ -32,6 +33,7 @@ export declare class Bot {
             token: string;
             clientId: string;
             mongoUri: string;
+            customStreams?: Transports[];
         };
     });
     /**

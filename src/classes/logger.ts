@@ -32,7 +32,6 @@ export class Logger {
             ),
             transports: [
                 new transports.Console({ level: 'info' }),
-                new transports.File({ filename: filePath, level: 'debug' }),
                 ...customStreams
             ]
         });
