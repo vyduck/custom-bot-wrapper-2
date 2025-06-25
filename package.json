@@ -13,7 +13,6 @@
   },
   "dependencies": {
     "better-cooldown": "^1.1.2",
-    "cdep": "github:vyduck/embed-pages",
     "discord.js": "^14.20.0",
     "mongoose": "^8.16.0",
     "ms": "^3.0.0-canary.1",

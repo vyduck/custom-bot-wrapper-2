@@ -3,8 +3,6 @@ import mongoose from "mongoose";
 import { HandlerManager } from "./handler_manager.js";
 import { CooldownManager } from "./cooldown_manager.js";
 import { Logger } from "./logger.js";
-import defaultCommands from "../defaults/commands/index.js";
-import defaultEvents from "../defaults/events/index.js";
 /**
  * Bot class for managing the Discord bot instance.
  * It handles commands, events, hooks, and database connections.
@@ -138,16 +136,6 @@ export class Bot {
         logger.debug(`Attached ${allEvents.length} events.`);
     }
     /**
-     * Adds default events to the bot.
-     * This method is called during the bot's initialization.
-     */
-    addDefaultEvents() {
-        logger.debug("Adding default events...");
-        for (const event of defaultEvents)
-            this.addEventHandler(event);
-        logger.debug(`Added ${defaultEvents.length} default events.`);
-    }
-    /**
      * Creates a logger instance for the bot.
      * This method initializes the global logger with a file path and log level.
      */
@@ -188,16 +176,6 @@ export class Bot {
                 await this.commandMap.get(command).autocomplete(context, interaction);
             }
         });
-    }
-    /**
-     * Adds default commands to the bot.
-     * This method is called during the bot's initialization.
-     */
-    async addDefaultCommands() {
-        logger.debug("Adding default commands...");
-        for (const command of defaultCommands)
-            this.addCommandHandler(command);
-        logger.debug(`Added ${defaultCommands.length} default commands.`);
     }
     /**
      * Publishes all commands to Discord.
@@ -264,10 +242,8 @@ export class Bot {
             throw new Error('Token is not set in the configuration');
         }
         logger.debug("Attaching events:");
-        this.addDefaultEvents();
         this.attachEvents();
         logger.debug("Attaching commands:");
-        await this.addDefaultCommands();
         await this.attachCommandsHandler();
         await this.publishCommands();
         logger.debug("Connecting to database:");

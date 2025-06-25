@@ -9,8 +9,6 @@ import { HookHandler } from "./handlers/hook_handler.js";
 import { CooldownManager } from "./cooldown_manager.js";
 import { Logger } from "./logger.js";
 
-import defaultCommands from "../defaults/commands/index.js";
-import defaultEvents from "../defaults/events/index.js";
 import { BaseContext, BaseCommandContext, ChatInputCommandContext, AutocompleteCommandContext, EventContext, Database } from "../interfaces/index";
 import { Store } from "../stores/store.js";
 
@@ -171,16 +169,6 @@ export class Bot {
     }
 
     /**
-     * Adds default events to the bot.
-     * This method is called during the bot's initialization.
-     */
-    private addDefaultEvents() {
-        logger.debug("Adding default events...");
-        for (const event of defaultEvents) this.addEventHandler(event);
-        logger.debug(`Added ${defaultEvents.length} default events.`);
-    }
-
-    /**
      * Creates a logger instance for the bot.
      * This method initializes the global logger with a file path and log level.
      */
@@ -224,17 +212,6 @@ export class Bot {
                 await this.commandMap.get(command).autocomplete(context as AutocompleteCommandContext, interaction);
             }
         });
-    }
-
-    /**
-     * Adds default commands to the bot.
-     * This method is called during the bot's initialization.
-     */
-    private async addDefaultCommands() {
-        logger.debug("Adding default commands...");
-        for (const command of defaultCommands)
-            this.addCommandHandler(command);
-        logger.debug(`Added ${defaultCommands.length} default commands.`);
     }
 
     /**
@@ -308,11 +285,9 @@ export class Bot {
         }
 
         logger.debug("Attaching events:");
-        this.addDefaultEvents();
         this.attachEvents();
 
         logger.debug("Attaching commands:");
-        await this.addDefaultCommands();
         await this.attachCommandsHandler();
         await this.publishCommands();
 

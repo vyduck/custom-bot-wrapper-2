@@ -72,11 +72,6 @@ export declare class Bot {
      */
     private attachEvents;
     /**
-     * Adds default events to the bot.
-     * This method is called during the bot's initialization.
-     */
-    private addDefaultEvents;
-    /**
      * Creates a logger instance for the bot.
      * This method initializes the global logger with a file path and log level.
      */
@@ -86,11 +81,6 @@ export declare class Bot {
      * It listens for interaction events and executes the appropriate command handler.
      */
     private attachCommandsHandler;
-    /**
-     * Adds default commands to the bot.
-     * This method is called during the bot's initialization.
-     */
-    private addDefaultCommands;
     /**
      * Publishes all commands to Discord.
      * This method uses the Discord REST API to register the commands.
